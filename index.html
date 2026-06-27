@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Løn">
+<meta name="theme-color" content="#0f172a">
+<title>Løn &amp; Timer</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg:#f1f5f9; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --card:#ffffff; --teal:#0f766e; --teal-d:#115e59;
+    --rose-bg:#fff1f2; --rose:#9f1239; --green-bg:#ecfdf5; --green:#047857;
+  }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:460px; margin:0 auto; padding:24px 16px calc(40px + env(safe-area-inset-bottom)); }
+  header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .logo { width:40px; height:40px; border-radius:10px; background:var(--teal); color:#fff;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  h1 { font-size:18px; margin:0; line-height:1.2; }
+  .sub { font-size:12px; color:var(--muted); margin:2px 0 0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
+  h2 { font-size:14px; margin:0 0 12px; }
+  label.fld { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  input[type=number], input[type=time], input[type=date] {
+    width:100%; border:1px solid #cbd5e1; border-radius:9px; padding:11px 12px; font-size:16px;
+    background:#fff; color:var(--ink); }
+  input:focus { outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(15,118,110,.18); }
+  .mono { font-variant-numeric:tabular-nums; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  .rate-row { display:flex; align-items:center; gap:10px; }
+  .rate-row .unit { font-size:14px; color:var(--muted); white-space:nowrap; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .full { grid-column:1 / -1; }
+  .toggle { display:flex; align-items:flex-start; gap:10px; margin-top:14px; font-size:13px; color:var(--ink); cursor:pointer; }
+  .toggle input { width:20px; height:20px; margin:1px 0 0; accent-color:var(--teal); flex-shrink:0; }
+  button.primary { width:100%; border:0; background:var(--teal); color:#fff; border-radius:9px;
+    padding:13px; font-size:15px; font-weight:600; cursor:pointer; }
+  button.primary:active { background:var(--teal-d); }
+  button.dark { width:100%; border:0; background:var(--ink); color:#fff; border-radius:9px;
+    padding:13px; font-size:15px; font-weight:600; cursor:pointer; }
+  button.dark:disabled { opacity:.3; }
+  .hero { background:var(--ink); color:#fff; border-radius:14px; padding:20px; margin-bottom:16px; }
+  .hero .lbl { font-size:12px; color:#94a3b8; margin:0 0 4px; }
+  .hero .big { font-size:36px; font-weight:600; letter-spacing:-.5px; margin:0 0 6px; }
+  .hero .meta { font-size:13px; color:#cbd5e1; margin:0; }
+  ul.list { list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  ul.list li { display:flex; align-items:center; gap:12px; padding:12px 14px; border-top:1px solid #f1f5f9; }
+  ul.list li:first-child { border-top:0; }
+  .li-main { flex:1; min-width:0; }
+  .li-date { font-size:14px; font-weight:600; }
+  .li-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+  .del { background:none; border:0; color:#94a3b8; padding:6px; cursor:pointer; font-size:18px; line-height:1; }
+  .del:active { color:var(--rose); }
+  .empty { background:var(--card); border:1px dashed #cbd5e1; border-radius:14px; padding:22px; text-align:center; font-size:13px; color:var(--muted); }
+  .sec-h { font-size:14px; font-weight:600; margin:0 0 8px; padding:0 2px; }
+  .help { font-size:12px; color:var(--muted); margin:0 0 12px; }
+  .result { border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:12px 0; }
+  .rrow { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:14px; }
+  .rrow .k { color:var(--muted); }
+  .rtotal { display:flex; justify-content:space-between; padding:12px; font-weight:700; font-size:14px; }
+  .ok { background:var(--green-bg); color:var(--green); }
+  .bad { background:var(--rose-bg); color:var(--rose); }
+  .hist-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none;
+    border:0; padding:8px 2px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; }
+  .hist li { display:flex; justify-content:space-between; align-items:center; }
+  .hist .amt { text-align:right; }
+  .note { font-size:12px; color:#94a3b8; line-height:1.6; padding:0 2px; margin-top:20px; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+    </div>
+    <div>
+      <h1>Løn &amp; Timer</h1>
+      <p class="sub">Registrér dine vagter, tjek din lønseddel.</p>
+    </div>
+  </header>
+
+  <!-- Timeløn + pause -->
+  <div class="card">
+    <label class="fld">Din timeløn</label>
+    <div class="rate-row">
+      <input id="rate" type="number" inputmode="decimal" min="0" step="0.01" class="mono" placeholder="0,00">
+      <span class="unit">kr. / time</span>
+    </div>
+    <label class="toggle">
+      <input id="breakToggle" type="checkbox" checked>
+      <span>Træk 30 min ubetalt pause fra ved vagter over 5 timer</span>
+    </label>
+  </div>
+
+  <!-- Registrér vagt -->
+  <div class="card">
+    <h2>Registrér en vagt</h2>
+    <div class="grid2">
+      <div class="full">
+        <label class="fld">Dato</label>
+        <input id="date" type="date">
+      </div>
+      <div>
+        <label class="fld">Fra</label>
+        <input id="start" type="time">
+      </div>
+      <div>
+        <label class="fld">Til</label>
+        <input id="end" type="time">
+      </div>
+    </div>
+    <button class="primary" id="addBtn">+ Tilføj vagt</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <p class="lbl">Denne periode — du skal tjene</p>
+    <p class="big mono" id="expected">0,00 kr.</p>
+    <p class="meta" id="meta">0 vagter · 0t 0m</p>
+  </div>
+
+  <!-- Liste -->
+  <p class="sec-h">Registrerede vagter</p>
+  <div id="listWrap"></div>
+
+  <!-- Lønseddel -->
+  <div class="card" style="margin-top:16px;">
+    <h2>Tjek din lønseddel</h2>
+    <p class="help">Indtast <b>bruttobeløbet</b> fra din lønseddel (før skat).</p>
+    <label class="fld">Bruttoløn modtaget</label>
+    <input id="paycheck" type="number" inputmode="decimal" min="0" step="0.01" class="mono" placeholder="0,00" style="margin-bottom:12px;">
+    <div id="resultWrap"></div>
+    <button class="dark" id="closeBtn" disabled>Gem &amp; start ny periode</button>
+  </div>
+
+  <!-- Historik -->
+  <div id="histWrap" class="hidden">
+    <button class="hist-toggle" id="histToggle"><span id="histTitle">Tidligere perioder</span><span id="histCaret">▾</span></button>
+    <ul class="list hist hidden" id="histList"></ul>
+  </div>
+
+  <p class="note">
+    Beregningen går ud fra timeløn. Beløbet er <b>brutto</b> (før skat) — sammenlign med bruttosummen på lønsedlen, ikke det der bliver sat ind på kontoen (det er netto efter skat).
+    Tillæg og overtid er ikke regnet med endnu. Krydser en vagt midnat (fx 22:00–02:00) regnes det automatisk med. Dine data gemmes på denne enhed.
+  </p>
+</div>
+
+<script>
+const KEY = "loen-app-v1";
+
+// Virker både i Claude (window.storage) og som selvstændig app (localStorage)
+const Store = {
+  async get(k){
+    if (typeof window !== "undefined" && window.storage && window.storage.get){
+      try { const r = await window.storage.get(k, false); return r && r.value ? r.value : null; } catch(e){ return null; }
+    }
+    try { return localStorage.getItem(k); } catch(e){ return null; }
+  },
+  async set(k,v){
+    if (typeof window !== "undefined" && window.storage && window.storage.set){
+      try { await window.storage.set(k, v, false); return; } catch(e){}
+    }
+    try { localStorage.setItem(k, v); } catch(e){}
+  }
+};
+
+let state = { rate:"", deductBreak:true, paycheck:"", entries:[], history:[], showHist:false };
+
+const dkk = new Intl.NumberFormat("da-DK",{style:"currency",currency:"DKK"});
+const money = n => dkk.format(Number(n)||0);
+const pad = n => String(n).padStart(2,"0");
+
+function todayStr(){ const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function dur(m){ return `${Math.floor(m/60)}t ${m%60}m`; }
+function niceDate(iso){
+  try { return new Date(iso+"T00:00:00").toLocaleDateString("da-DK",{weekday:"short",day:"numeric",month:"short"}); }
+  catch(e){ return iso; }
+}
+function toMin(t){
+  if(!t || !/^\d{1,2}:\d{2}$/.test(t)) return null;
+  const [h,m]=t.split(":").map(Number);
+  if(h>23||m>59) return null;
+  return h*60+m;
+}
+function shiftMin(start,end){
+  const s=toMin(start), e=toMin(end);
+  if(s==null||e==null) return null;
+  let d=e-s; if(d<=0) d+=1440;
+  return d;
+}
+function rawMin(en){ const r=shiftMin(en.start,en.end); return r==null?0:r; }
+function paidMin(en){ const r=rawMin(en); return (state.deductBreak && r>300) ? r-30 : r; }
+function hadBreak(en){ return state.deductBreak && rawMin(en)>300; }
+
+function rateNum(){ return parseFloat((state.rate+"").replace(",", ".")) || 0; }
+function paycheckNum(){ return parseFloat((state.paycheck+"").replace(",", ".")) || 0; }
+
+async function save(){ await Store.set(KEY, JSON.stringify({
+  rate:state.rate, deductBreak:state.deductBreak, paycheck:state.paycheck,
+  entries:state.entries, history:state.history
+})); }
+
+function totals(){
+  const totalPaid = state.entries.reduce((a,e)=>a+paidMin(e),0);
+  return { totalPaid, expected:(totalPaid/60)*rateNum() };
+}
+
+function renderAll(){
+  const { totalPaid, expected } = totals();
+  // hero
+  document.getElementById("expected").textContent = money(expected);
+  document.getElementById("meta").textContent =
+    `${state.entries.length} ${state.entries.length===1?"vagt":"vagter"} · ${dur(totalPaid)} betalt tid`;
+
+  // liste
+  const lw = document.getElementById("listWrap");
+  if(state.entries.length===0){
+    lw.innerHTML = `<div class="empty">Ingen vagter endnu. Tilføj din første vagt ovenfor.</div>`;
+  } else {
+    const r = rateNum();
+    lw.innerHTML = `<ul class="list">` + state.entries.map(e=>{
+      const pm = paidMin(e);
+      const pay = (pm/60)*r;
+      const brk = hadBreak(e) ? ` · −30 min pause` : "";
+      const payTxt = r>0 ? ` · ${money(pay)}` : "";
+      return `<li>
+        <div class="li-main">
+          <div class="li-date">${niceDate(e.date)}</div>
+          <div class="li-sub mono">${e.start}–${e.end} · ${dur(pm)}${brk}${payTxt}</div>
+        </div>
+        <button class="del" data-del="${e.id}" aria-label="Slet vagt">🗑</button>
+      </li>`;
+    }).join("") + `</ul>`;
+  }
+
+  // resultat
+  const rw = document.getElementById("resultWrap");
+  const r = rateNum(), pc = paycheckNum();
+  const hasPc = (state.paycheck+"").trim()!=="" && !isNaN(pc);
+  const can = r>0 && state.entries.length>0 && hasPc;
+  if(r===0){
+    rw.innerHTML = `<p class="help">Tilføj din timeløn ovenfor for at sammenligne.</p>`;
+  } else if(state.entries.length===0){
+    rw.innerHTML = `<p class="help">Registrér nogle vagter ovenfor for at sammenligne.</p>`;
+  } else if(hasPc){
+    const diff = pc - expected;
+    let cls, txt, amt="";
+    if(Math.abs(diff)<0.005){ cls="ok"; txt="Stemmer ✓"; }
+    else if(diff>0){ cls="ok"; txt="Ekstra"; amt=money(diff); }
+    else { cls="bad"; txt="Mangler"; amt=money(-diff); }
+    rw.innerHTML = `<div class="result">
+      <div class="rrow"><span class="k">Du skal tjene</span><span class="mono">${money(expected)}</span></div>
+      <div class="rrow"><span class="k">Din lønseddel</span><span class="mono">${money(pc)}</span></div>
+      <div class="rtotal ${cls}"><span>${txt}</span><span class="mono">${amt}</span></div>
+    </div>`;
+  } else {
+    rw.innerHTML = `<p class="help">Indtast din bruttoløn ovenfor for at se forskellen.</p>`;
+  }
+  document.getElementById("closeBtn").disabled = !can;
+
+  // historik
+  const hw = document.getElementById("histWrap");
+  if(state.history.length===0){ hw.classList.add("hidden"); }
+  else {
+    hw.classList.remove("hidden");
+    document.getElementById("histTitle").textContent = `Tidligere perioder (${state.history.length})`;
+    document.getElementById("histCaret").textContent = state.showHist ? "▴" : "▾";
+    const hl = document.getElementById("histList");
+    hl.classList.toggle("hidden", !state.showHist);
+    hl.innerHTML = state.history.map(h=>{
+      const d = h.diff;
+      const cls = Math.abs(d)<0.005 ? "" : (d>0?"":"");
+      const color = d<-0.005 ? "var(--rose)" : (d>0.005 ? "var(--green)" : "var(--muted)");
+      const sign = d<-0.005 ? "−" : (d>0.005 ? "+" : "");
+      return `<li>
+        <div class="li-main">
+          <div class="li-date">${niceDate(h.closedOn)}</div>
+          <div class="li-sub mono">${h.days} vagter · ${dur(h.totalPaid)}</div>
+        </div>
+        <div class="amt">
+          <div class="mono" style="font-size:14px;">${money(h.received)}</div>
+          <div class="mono" style="font-size:12px;color:${color};">${sign}${money(Math.abs(d))}</div>
+        </div>
+      </li>`;
+    }).join("");
+  }
+}
+
+// Handlers
+function addEntry(){
+  const date = document.getElementById("date").value || todayStr();
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
+  if(shiftMin(start,end)==null) return;
+  state.entries.unshift({ id:Date.now(), date, start, end });
+  document.getElementById("start").value = "";
+  document.getElementById("end").value = "";
+  save(); renderAll();
+}
+
+function closePeriod(){
+  const { totalPaid, expected } = totals();
+  const pc = paycheckNum();
+  if(!(rateNum()>0 && state.entries.length>0 && (state.paycheck+"").trim()!=="")) return;
+  state.history.unshift({
+    id:Date.now(), closedOn:todayStr(), totalPaid, expected,
+    received:pc, diff: pc-expected, days:state.entries.length
+  });
+  state.entries = [];
+  state.paycheck = "";
+  document.getElementById("paycheck").value = "";
+  save(); renderAll();
+}
+
+// Init
+async function init(){
+  const raw = await Store.get(KEY);
+  if(raw){
+    try {
+      const d = JSON.parse(raw);
+      state.rate = d.rate ?? "";
+      state.deductBreak = d.deductBreak !== false;
+      state.paycheck = d.paycheck ?? "";
+      state.entries = Array.isArray(d.entries) ? d.entries : [];
+      state.history = Array.isArray(d.history) ? d.history : [];
+    } catch(e){}
+  }
+  document.getElementById("rate").value = state.rate;
+  document.getElementById("breakToggle").checked = state.deductBreak;
+  document.getElementById("paycheck").value = state.paycheck;
+  document.getElementById("date").value = todayStr();
+
+  document.getElementById("rate").addEventListener("input", e=>{ state.rate=e.target.value; save(); renderAll(); });
+  document.getElementById("breakToggle").addEventListener("change", e=>{ state.deductBreak=e.target.checked; save(); renderAll(); });
+  document.getElementById("paycheck").addEventListener("input", e=>{ state.paycheck=e.target.value; save(); renderAll(); });
+  document.getElementById("addBtn").addEventListener("click", addEntry);
+  document.getElementById("closeBtn").addEventListener("click", closePeriod);
+  document.getElementById("histToggle").addEventListener("click", ()=>{ state.showHist=!state.showHist; renderAll(); });
+  document.getElementById("listWrap").addEventListener("click", e=>{
+    const b = e.target.closest("[data-del]"); if(!b) return;
+    const id = Number(b.getAttribute("data-del"));
+    state.entries = state.entries.filter(x=>x.id!==id);
+    save(); renderAll();
+  });
+
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>
