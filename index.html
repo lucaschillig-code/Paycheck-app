@@ -15,6 +15,7 @@
     --bg:#f1f5f9; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
     --card:#ffffff; --teal:#0f766e; --teal-d:#115e59;
     --rose-bg:#fff1f2; --rose:#9f1239; --green-bg:#ecfdf5; --green:#047857;
+    --amber-bg:#fffbeb; --amber:#b45309;
   }
   html,body { margin:0; padding:0; background:var(--bg); color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
@@ -36,6 +37,7 @@
   .rate-row .unit { font-size:14px; color:var(--muted); white-space:nowrap; }
   .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
   .full { grid-column:1 / -1; }
+  .fhelp { font-size:11px; color:#94a3b8; margin:5px 2px 0; line-height:1.45; }
   .toggle { display:flex; align-items:flex-start; gap:10px; margin-top:14px; font-size:13px; color:var(--ink); cursor:pointer; }
   .toggle input { width:20px; height:20px; margin:1px 0 0; accent-color:var(--teal); flex-shrink:0; }
   button.primary { width:100%; border:0; background:var(--teal); color:#fff; border-radius:9px;
@@ -48,12 +50,14 @@
   .hero .lbl { font-size:12px; color:#94a3b8; margin:0 0 4px; }
   .hero .big { font-size:36px; font-weight:600; letter-spacing:-.5px; margin:0 0 6px; }
   .hero .meta { font-size:13px; color:#cbd5e1; margin:0; }
+  .hero .gross { font-size:12px; color:#94a3b8; margin:8px 0 0; }
   ul.list { list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
   ul.list li { display:flex; align-items:center; gap:12px; padding:12px 14px; border-top:1px solid #f1f5f9; }
   ul.list li:first-child { border-top:0; }
   .li-main { flex:1; min-width:0; }
   .li-date { font-size:14px; font-weight:600; }
   .li-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+  .li-tags { font-size:11px; color:var(--teal); margin-top:3px; font-weight:600; }
   .del { background:none; border:0; color:#94a3b8; padding:6px; cursor:pointer; font-size:18px; line-height:1; }
   .del:active { color:var(--rose); }
   .empty { background:var(--card); border:1px dashed #cbd5e1; border-radius:14px; padding:22px; text-align:center; font-size:13px; color:var(--muted); }
@@ -61,15 +65,23 @@
   .help { font-size:12px; color:var(--muted); margin:0 0 12px; }
   .result { border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:12px 0; }
   .rrow { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:14px; }
+  .rrow:last-child { border-bottom:0; }
   .rrow .k { color:var(--muted); }
+  .rrow.sub .k { padding-left:12px; font-size:13px; }
+  .rrow.sub { padding-top:7px; padding-bottom:7px; }
+  .rrow .neg { color:var(--rose); }
   .rtotal { display:flex; justify-content:space-between; padding:12px; font-weight:700; font-size:14px; }
   .ok { background:var(--green-bg); color:var(--green); }
   .bad { background:var(--rose-bg); color:var(--rose); }
-  .hist-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none;
+  .net-total { background:#f0fdfa; color:var(--teal-d); }
+  .hist-toggle, .acc-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none;
     border:0; padding:8px 2px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; }
+  .acc-toggle { padding:2px; margin-bottom:2px; }
   .hist li { display:flex; justify-content:space-between; align-items:center; }
   .hist .amt { text-align:right; }
   .note { font-size:12px; color:#94a3b8; line-height:1.6; padding:0 2px; margin-top:20px; }
+  .flag { background:var(--amber-bg); color:var(--amber); border:1px solid #fde68a; border-radius:10px;
+    padding:10px 12px; font-size:12px; line-height:1.5; margin-top:12px; }
   .hidden { display:none; }
 </style>
 </head>
@@ -81,11 +93,11 @@
     </div>
     <div>
       <h1>Løn &amp; Timer</h1>
-      <p class="sub">Registrér dine vagter, tjek din lønseddel.</p>
+      <p class="sub">Vagter, tillæg og hvad der lander på kontoen.</p>
     </div>
   </header>
 
-  <!-- Timeløn + pause -->
+  <!-- Satser -->
   <div class="card">
     <label class="fld">Din timeløn</label>
     <div class="rate-row">
@@ -96,6 +108,39 @@
       <input id="breakToggle" type="checkbox" checked>
       <span>Træk 30 min ubetalt pause fra ved vagter over 5 timer</span>
     </label>
+
+    <button class="acc-toggle" id="ratesToggle" style="margin-top:14px;">
+      <span>Tillæg &amp; satser</span><span id="ratesCaret">▾</span>
+    </button>
+    <div id="ratesBody" class="hidden" style="margin-top:6px;">
+      <div class="grid2">
+        <div>
+          <label class="fld">Aftentillæg</label>
+          <input id="rAften" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
+        </div>
+        <div>
+          <label class="fld">Aften starter</label>
+          <input id="eveningStart" type="time" step="3600">
+        </div>
+        <div>
+          <label class="fld">Lørdagstillæg</label>
+          <input id="rLor" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
+        </div>
+        <div>
+          <label class="fld">Lørdag starter</label>
+          <input id="satStart" type="time" step="900">
+        </div>
+        <div>
+          <label class="fld">Søndagstillæg</label>
+          <input id="rSon" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
+        </div>
+        <div>
+          <label class="fld">Nattillæg (efter 23)</label>
+          <input id="rNat" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
+        </div>
+      </div>
+      <p class="fhelp">Efter butiksoverenskomsten udløses tillæg hverdage fra kl. 18 (og en højere nattakst fra kl. 23), lørdag fra kl. 15 og søndag hele dagen. Appen fordeler selv dine vagttimer i de bånd — hver time får grundløn + højst ét tillæg.</p>
+    </div>
   </div>
 
   <!-- Registrér vagt -->
@@ -120,9 +165,39 @@
 
   <!-- Hero -->
   <div class="hero">
-    <p class="lbl">Denne periode — du skal tjene</p>
-    <p class="big mono" id="expected">0,00 kr.</p>
+    <p class="lbl">Denne periode — udbetalt ca.</p>
+    <p class="big mono" id="net">0,00 kr.</p>
     <p class="meta" id="meta">0 vagter · 0t 0m</p>
+    <p class="gross mono" id="grossLine"></p>
+  </div>
+
+  <!-- Beregning -->
+  <div class="card">
+    <h2>Beregning</h2>
+    <div id="calcWrap"></div>
+  </div>
+
+  <!-- Skat & fradrag -->
+  <div class="card">
+    <button class="acc-toggle" id="taxToggle"><span>Skat &amp; fradrag</span><span id="taxCaret">▾</span></button>
+    <div id="taxBody" class="hidden" style="margin-top:10px;">
+      <div class="grid2">
+        <div>
+          <label class="fld">Trækprocent</label>
+          <div class="rate-row"><input id="traek" type="number" inputmode="decimal" min="0" step="0.1" class="mono"><span class="unit">%</span></div>
+        </div>
+        <div>
+          <label class="fld">ATP pr. periode</label>
+          <div class="rate-row"><input id="atp" type="number" inputmode="decimal" min="0" step="1" class="mono"><span class="unit">kr.</span></div>
+        </div>
+      </div>
+      <label class="fld">Fradrag pr. lønperiode</label>
+      <div class="rate-row" style="margin-bottom:2px;"><input id="fradrag" type="number" inputmode="decimal" min="0" step="1" class="mono"><span class="unit">kr.</span></div>
+      <p class="fhelp">Trækprocent og fradrag står på dit skattekort / din forskudsopgørelse (på sedlen: 38% og 4.503 kr. for en måned).</p>
+      <label class="fld" style="margin-top:12px;">Egen pension</label>
+      <div class="rate-row"><input id="pension" type="number" inputmode="decimal" min="0" step="0.1" class="mono"><span class="unit">% af løn</span></div>
+      <p class="fhelp">Din seddel viser 1,8% — men af en højere basis (inkl. ferieberettiget løn). ~2,2% af bruttolønnen rammer det samme beløb.</p>
+    </div>
   </div>
 
   <!-- Liste -->
@@ -132,8 +207,8 @@
   <!-- Lønseddel -->
   <div class="card" style="margin-top:16px;">
     <h2>Tjek din lønseddel</h2>
-    <p class="help">Indtast <b>bruttobeløbet</b> fra din lønseddel (før skat).</p>
-    <label class="fld">Bruttoløn modtaget</label>
+    <p class="help">Indtast det beløb der blev <b>overført til din konto</b> (udbetalt, efter skat).</p>
+    <label class="fld">Overført til konto</label>
     <input id="paycheck" type="number" inputmode="decimal" min="0" step="0.01" class="mono" placeholder="0,00" style="margin-bottom:12px;">
     <div id="resultWrap"></div>
     <button class="dark" id="closeBtn" disabled>Gem &amp; start ny periode</button>
@@ -146,15 +221,13 @@
   </div>
 
   <p class="note">
-    Beregningen går ud fra timeløn. Beløbet er <b>brutto</b> (før skat) — sammenlign med bruttosummen på lønsedlen, ikke det der bliver sat ind på kontoen (det er netto efter skat).
-    Tillæg og overtid er ikke regnet med endnu. Krydser en vagt midnat (fx 22:00–02:00) regnes det automatisk med. Dine data gemmes på denne enhed.
+    Tallet er et <b>estimat</b> af din udbetaling: bruttoløn minus ATP, pension, AM-bidrag (8%) og A-skat. Tillæg følger butiksoverenskomsten (hverdag fra 18, nat fra 23, lørdag fra 15, søndag hele dagen). Mertid er regnet med, fordi den udbetales til normal timeløn. Sygeløn, feriepenge fra FerieKonto og SH/fritvalg er ikke regnet med automatisk. Krydser en vagt midnat regnes det automatisk. Dine data gemmes kun på denne enhed.
   </p>
 </div>
 
 <script>
 const KEY = "loen-app-v1";
 
-// Virker både i Claude (window.storage) og som selvstændig app (localStorage)
 const Store = {
   async get(k){
     if (typeof window !== "undefined" && window.storage && window.storage.get){
@@ -170,7 +243,16 @@ const Store = {
   }
 };
 
-let state = { rate:"", deductBreak:true, paycheck:"", entries:[], history:[], showHist:false };
+// Defaults afledt af lønsedlen
+const DEF = { rAften:"32.15", rLor:"56.55", rSon:"63.00", rNat:"41.70", eveningStart:"18:00", satStart:"15:00",
+              traek:"38", fradrag:"4503", atp:"33", pension:"2.2" };
+
+let state = {
+  rate:"", deductBreak:true, paycheck:"", entries:[], history:[], showHist:false,
+  rAften:DEF.rAften, rLor:DEF.rLor, rSon:DEF.rSon, rNat:DEF.rNat, eveningStart:DEF.eveningStart, satStart:DEF.satStart,
+  traek:DEF.traek, fradrag:DEF.fradrag, atp:DEF.atp, pension:DEF.pension,
+  showRates:false, showTax:false
+};
 
 const dkk = new Intl.NumberFormat("da-DK",{style:"currency",currency:"DKK"});
 const money = n => dkk.format(Number(n)||0);
@@ -195,72 +277,161 @@ function shiftMin(start,end){
   return d;
 }
 function rawMin(en){ const r=shiftMin(en.start,en.end); return r==null?0:r; }
-function paidMin(en){ const r=rawMin(en); return (state.deductBreak && r>300) ? r-30 : r; }
-function hadBreak(en){ return state.deductBreak && rawMin(en)>300; }
+function breakMin(en){ return (state.deductBreak && rawMin(en)>300) ? 30 : 0; }
+function baseMin(en){ return rawMin(en) - breakMin(en); }
 
-function rateNum(){ return parseFloat((state.rate+"").replace(",", ".")) || 0; }
+// tal-helpers
+function num(v){ const n=parseFloat((v+"").replace(",", ".")); return isNaN(n)?0:n; }
+function setting(v,d){ const n=parseFloat((v+"").replace(",", ".")); return isNaN(n)?d:n; }
+function rateNum(){ return num(state.rate); }
 function paycheckNum(){ return parseFloat((state.paycheck+"").replace(",", ".")) || 0; }
+
+// Fordel vagtens minutter i tillægs-buckets (søn > lør > nat > aften > grund)
+function classify(en){
+  const b={evening:0, night:0, sat:0, sun:0};
+  const s=toMin(en.start);
+  if(s==null) return b;
+  const total=rawMin(en);
+  const evStart = toMin(state.eveningStart) ?? 1080;   // hverdag-aften, fra 18:00
+  const satStart = toMin(state.satStart) ?? 900;       // lørdag, fra 15:00
+  const dow0 = new Date(en.date+"T00:00:00").getDay(); // ugedag for startdatoen
+  for(let i=0;i<total;i++){
+    const abs = s+i;                       // minutter fra midnat på startdatoen
+    const dow = (dow0 + Math.floor(abs/1440)) % 7;
+    const mod = abs%1440;                  // minut på døgnet
+    if(dow===0) b.sun++;                                  // søndag: hele dagen
+    else if(dow===6){ if(mod>=satStart) b.sat++; }        // lørdag: fra kl. 15
+    else if(mod>=1380 || mod<360) b.night++;              // hverdag nat: 23-06
+    else if(mod>=evStart) b.evening++;                    // hverdag aften: 18-23
+  }
+  return b;
+}
+
+function computeNet(gross){
+  const pension = gross * (setting(state.pension, 2.2)/100);
+  const atp = setting(state.atp, 33);
+  const amBase = gross - atp - pension;
+  const am = Math.round(amBase * 0.08);
+  const askatIncome = amBase - am;
+  const taxBase = Math.max(0, askatIncome - setting(state.fradrag, 4503));
+  const askat = Math.round(taxBase * (setting(state.traek, 38)/100));
+  const net = gross - atp - pension - am - askat;
+  return { gross, atp, pension, am, askat, net };
+}
 
 async function save(){ await Store.set(KEY, JSON.stringify({
   rate:state.rate, deductBreak:state.deductBreak, paycheck:state.paycheck,
-  entries:state.entries, history:state.history
+  entries:state.entries, history:state.history,
+  rAften:state.rAften, rLor:state.rLor, rSon:state.rSon, rNat:state.rNat, eveningStart:state.eveningStart, satStart:state.satStart,
+  traek:state.traek, fradrag:state.fradrag, atp:state.atp, pension:state.pension
 })); }
 
 function totals(){
-  const totalPaid = state.entries.reduce((a,e)=>a+paidMin(e),0);
-  return { totalPaid, expected:(totalPaid/60)*rateNum() };
+  let base=0, ev=0, ni=0, sa=0, su=0;
+  for(const e of state.entries){
+    base += baseMin(e);
+    const c = classify(e);
+    ev += c.evening; ni += c.night; sa += c.sat; su += c.sun;
+  }
+  const tl=rateNum();
+  const basePay = (base/60)*tl;
+  const evPay=(ev/60)*num(state.rAften);
+  const niPay=(ni/60)*num(state.rNat);
+  const saPay=(sa/60)*num(state.rLor);
+  const suPay=(su/60)*num(state.rSon);
+  const gross = basePay+evPay+niPay+saPay+suPay;
+  const n = computeNet(gross);
+  return { base, ev, ni, sa, su, basePay, evPay, niPay, saPay, suPay, gross, ...n };
 }
 
 function renderAll(){
-  const { totalPaid, expected } = totals();
+  const t = totals();
+
   // hero
-  document.getElementById("expected").textContent = money(expected);
+  document.getElementById("net").textContent = money(t.gross>0 ? t.net : 0);
   document.getElementById("meta").textContent =
-    `${state.entries.length} ${state.entries.length===1?"vagt":"vagter"} · ${dur(totalPaid)} betalt tid`;
+    `${state.entries.length} ${state.entries.length===1?"vagt":"vagter"} · ${dur(t.base)} betalt tid`;
+  document.getElementById("grossLine").textContent = t.gross>0 ? `Brutto ${money(t.gross)}` : "";
+
+  // beregning
+  const cw = document.getElementById("calcWrap");
+  if(rateNum()===0){
+    cw.innerHTML = `<p class="help">Tilføj din timeløn ovenfor for at se beregningen.</p>`;
+  } else if(state.entries.length===0){
+    cw.innerHTML = `<p class="help">Registrér nogle vagter ovenfor for at se beregningen.</p>`;
+  } else {
+    const tr = setting(state.traek,38), pn = setting(state.pension,2.2);
+    const sub = (label,val)=> val>0.005 ? `<div class="rrow sub"><span class="k">${label}</span><span class="mono">${money(val)}</span></div>` : "";
+    cw.innerHTML = `<div class="result">
+      <div class="rrow"><span class="k"><b>Bruttoløn</b></span><span class="mono"><b>${money(t.gross)}</b></span></div>
+      ${sub("Grundløn", t.basePay)}
+      ${sub("Aftentillæg", t.evPay)}
+      ${sub("Nattillæg", t.niPay)}
+      ${sub("Lørdagstillæg", t.saPay)}
+      ${sub("Søndagstillæg", t.suPay)}
+      <div class="rrow"><span class="k">ATP</span><span class="mono neg">−${money(t.atp)}</span></div>
+      <div class="rrow"><span class="k">Pension (${pn.toLocaleString("da-DK")}%)</span><span class="mono neg">−${money(t.pension)}</span></div>
+      <div class="rrow"><span class="k">AM-bidrag (8%)</span><span class="mono neg">−${money(t.am)}</span></div>
+      <div class="rrow"><span class="k">A-skat (${tr.toLocaleString("da-DK")}%)</span><span class="mono neg">−${money(t.askat)}</span></div>
+      <div class="rtotal net-total"><span>Udbetalt ca.</span><span class="mono">${money(t.net)}</span></div>
+    </div>
+    <p class="fhelp">Tillægs-fordeling: ${(t.ev/60).toFixed(2).replace(".",",")}t aften${t.ni>0?` · ${(t.ni/60).toFixed(2).replace(".",",")}t nat`:""} · ${(t.sa/60).toFixed(2).replace(".",",")}t lørdag · ${(t.su/60).toFixed(2).replace(".",",")}t søndag.</p>`;
+  }
 
   // liste
   const lw = document.getElementById("listWrap");
   if(state.entries.length===0){
     lw.innerHTML = `<div class="empty">Ingen vagter endnu. Tilføj din første vagt ovenfor.</div>`;
   } else {
-    const r = rateNum();
+    const tl = rateNum();
     lw.innerHTML = `<ul class="list">` + state.entries.map(e=>{
-      const pm = paidMin(e);
-      const pay = (pm/60)*r;
-      const brk = hadBreak(e) ? ` · −30 min pause` : "";
-      const payTxt = r>0 ? ` · ${money(pay)}` : "";
+      const bm = baseMin(e);
+      const c = classify(e);
+      const evP=(c.evening/60)*num(state.rAften), niP=(c.night/60)*num(state.rNat), saP=(c.sat/60)*num(state.rLor), suP=(c.sun/60)*num(state.rSon);
+      const pay = (bm/60)*tl + evP+niP+saP+suP;
+      const brk = breakMin(e) ? ` · −30 min pause` : "";
+      const payTxt = tl>0 ? ` · ${money(pay)}` : "";
+      const tags=[];
+      if(c.evening>0) tags.push(`${(c.evening/60).toFixed(2).replace(".",",")}t aften`);
+      if(c.night>0) tags.push(`${(c.night/60).toFixed(2).replace(".",",")}t nat`);
+      if(c.sat>0) tags.push(`${(c.sat/60).toFixed(2).replace(".",",")}t lør`);
+      if(c.sun>0) tags.push(`${(c.sun/60).toFixed(2).replace(".",",")}t søn`);
+      const tagLine = tags.length ? `<div class="li-tags">+ ${tags.join(" · ")}</div>` : "";
       return `<li>
         <div class="li-main">
           <div class="li-date">${niceDate(e.date)}</div>
-          <div class="li-sub mono">${e.start}–${e.end} · ${dur(pm)}${brk}${payTxt}</div>
+          <div class="li-sub mono">${e.start}–${e.end} · ${dur(bm)}${brk}${payTxt}</div>
+          ${tagLine}
         </div>
         <button class="del" data-del="${e.id}" aria-label="Slet vagt">🗑</button>
       </li>`;
     }).join("") + `</ul>`;
   }
 
-  // resultat
+  // resultat (sammenlign mod netto)
   const rw = document.getElementById("resultWrap");
-  const r = rateNum(), pc = paycheckNum();
+  const pc = paycheckNum();
   const hasPc = (state.paycheck+"").trim()!=="" && !isNaN(pc);
-  const can = r>0 && state.entries.length>0 && hasPc;
-  if(r===0){
+  const can = rateNum()>0 && state.entries.length>0 && hasPc;
+  if(rateNum()===0){
     rw.innerHTML = `<p class="help">Tilføj din timeløn ovenfor for at sammenligne.</p>`;
   } else if(state.entries.length===0){
     rw.innerHTML = `<p class="help">Registrér nogle vagter ovenfor for at sammenligne.</p>`;
   } else if(hasPc){
-    const diff = pc - expected;
+    const diff = pc - t.net;
+    const tol = Math.max(25, t.net*0.005);
     let cls, txt, amt="";
-    if(Math.abs(diff)<0.005){ cls="ok"; txt="Stemmer ✓"; }
-    else if(diff>0){ cls="ok"; txt="Ekstra"; amt=money(diff); }
-    else { cls="bad"; txt="Mangler"; amt=money(-diff); }
+    if(Math.abs(diff)<=tol){ cls="ok"; txt="Stemmer ✓ (ca.)"; }
+    else if(diff>0){ cls="ok"; txt="Mere end ventet"; amt=money(diff); }
+    else { cls="bad"; txt="Mindre end ventet"; amt=money(-diff); }
     rw.innerHTML = `<div class="result">
-      <div class="rrow"><span class="k">Du skal tjene</span><span class="mono">${money(expected)}</span></div>
-      <div class="rrow"><span class="k">Din lønseddel</span><span class="mono">${money(pc)}</span></div>
+      <div class="rrow"><span class="k">Estimat udbetalt</span><span class="mono">${money(t.net)}</span></div>
+      <div class="rrow"><span class="k">Overført til konto</span><span class="mono">${money(pc)}</span></div>
       <div class="rtotal ${cls}"><span>${txt}</span><span class="mono">${amt}</span></div>
-    </div>`;
+    </div>
+    <p class="fhelp">Lille forskel er normalt (afrunding, ATP-trin, pensionsbasis). Vil du tjekke om arbejdsgiveren har betalt rigtigt, er det mest sikkert at sammenligne <b>brutto</b> (${money(t.gross)}) med bruttosummen på sedlen.</p>`;
   } else {
-    rw.innerHTML = `<p class="help">Indtast din bruttoløn ovenfor for at se forskellen.</p>`;
+    rw.innerHTML = `<p class="help">Indtast det overførte beløb ovenfor for at se forskellen.</p>`;
   }
   document.getElementById("closeBtn").disabled = !can;
 
@@ -275,7 +446,6 @@ function renderAll(){
     hl.classList.toggle("hidden", !state.showHist);
     hl.innerHTML = state.history.map(h=>{
       const d = h.diff;
-      const cls = Math.abs(d)<0.005 ? "" : (d>0?"":"");
       const color = d<-0.005 ? "var(--rose)" : (d>0.005 ? "var(--green)" : "var(--muted)");
       const sign = d<-0.005 ? "−" : (d>0.005 ? "+" : "");
       return `<li>
@@ -305,17 +475,28 @@ function addEntry(){
 }
 
 function closePeriod(){
-  const { totalPaid, expected } = totals();
+  const t = totals();
   const pc = paycheckNum();
   if(!(rateNum()>0 && state.entries.length>0 && (state.paycheck+"").trim()!=="")) return;
   state.history.unshift({
-    id:Date.now(), closedOn:todayStr(), totalPaid, expected,
-    received:pc, diff: pc-expected, days:state.entries.length
+    id:Date.now(), closedOn:todayStr(), totalPaid:t.base, expected:t.net,
+    received:pc, diff: pc-t.net, days:state.entries.length
   });
   state.entries = [];
   state.paycheck = "";
   document.getElementById("paycheck").value = "";
   save(); renderAll();
+}
+
+function bindNum(id, key){
+  document.getElementById(id).addEventListener("input", e=>{ state[key]=e.target.value; save(); renderAll(); });
+}
+function bindAcc(btnId, bodyId, caretId, key){
+  document.getElementById(btnId).addEventListener("click", ()=>{
+    state[key]=!state[key];
+    document.getElementById(bodyId).classList.toggle("hidden", !state[key]);
+    document.getElementById(caretId).textContent = state[key] ? "▴" : "▾";
+  });
 }
 
 // Init
@@ -329,19 +510,46 @@ async function init(){
       state.paycheck = d.paycheck ?? "";
       state.entries = Array.isArray(d.entries) ? d.entries : [];
       state.history = Array.isArray(d.history) ? d.history : [];
+      state.rAften = d.rAften ?? DEF.rAften;
+      state.rLor = d.rLor ?? DEF.rLor;
+      state.rSon = d.rSon ?? DEF.rSon;
+      state.rNat = d.rNat ?? DEF.rNat;
+      state.eveningStart = d.eveningStart ?? DEF.eveningStart;
+      state.satStart = d.satStart ?? DEF.satStart;
+      state.traek = d.traek ?? DEF.traek;
+      state.fradrag = d.fradrag ?? DEF.fradrag;
+      state.atp = d.atp ?? DEF.atp;
+      state.pension = d.pension ?? DEF.pension;
     } catch(e){}
   }
   document.getElementById("rate").value = state.rate;
   document.getElementById("breakToggle").checked = state.deductBreak;
   document.getElementById("paycheck").value = state.paycheck;
   document.getElementById("date").value = todayStr();
+  document.getElementById("rAften").value = state.rAften;
+  document.getElementById("rLor").value = state.rLor;
+  document.getElementById("rSon").value = state.rSon;
+  document.getElementById("rNat").value = state.rNat;
+  document.getElementById("eveningStart").value = state.eveningStart;
+  document.getElementById("satStart").value = state.satStart;
+  document.getElementById("traek").value = state.traek;
+  document.getElementById("fradrag").value = state.fradrag;
+  document.getElementById("atp").value = state.atp;
+  document.getElementById("pension").value = state.pension;
 
   document.getElementById("rate").addEventListener("input", e=>{ state.rate=e.target.value; save(); renderAll(); });
   document.getElementById("breakToggle").addEventListener("change", e=>{ state.deductBreak=e.target.checked; save(); renderAll(); });
   document.getElementById("paycheck").addEventListener("input", e=>{ state.paycheck=e.target.value; save(); renderAll(); });
+  document.getElementById("eveningStart").addEventListener("input", e=>{ state.eveningStart=e.target.value; save(); renderAll(); });
+  document.getElementById("satStart").addEventListener("input", e=>{ state.satStart=e.target.value; save(); renderAll(); });
+  bindNum("rAften","rAften"); bindNum("rLor","rLor"); bindNum("rSon","rSon"); bindNum("rNat","rNat");
+  bindNum("traek","traek"); bindNum("fradrag","fradrag"); bindNum("atp","atp"); bindNum("pension","pension");
+
   document.getElementById("addBtn").addEventListener("click", addEntry);
   document.getElementById("closeBtn").addEventListener("click", closePeriod);
   document.getElementById("histToggle").addEventListener("click", ()=>{ state.showHist=!state.showHist; renderAll(); });
+  bindAcc("ratesToggle","ratesBody","ratesCaret","showRates");
+  bindAcc("taxToggle","taxBody","taxCaret","showTax");
   document.getElementById("listWrap").addEventListener("click", e=>{
     const b = e.target.closest("[data-del]"); if(!b) return;
     const id = Number(b.getAttribute("data-del"));
