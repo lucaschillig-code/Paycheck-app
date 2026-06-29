@@ -80,7 +80,7 @@
 
   /* Accordions */
   .acc-toggle, .hist-toggle{ width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:0; padding:2px; font-size:15px; font-weight:600; color:var(--ink); cursor:pointer; }
-  .acc-toggle .car, .hist-toggle .car{ color:var(--faint); font-size:13px; }
+  .acc-toggle .car, .hist-toggle .car{ color:var(--muted); font-size:14px; }
 
   /* Breakdown (receipt) */
   .result{ margin:2px 0; }
@@ -111,6 +111,11 @@
   .del:active{ color:var(--rose); }
   .empty{ background:var(--card); border:1px dashed #cdd6cb; border-radius:15px; padding:24px; text-align:center; font-size:13px; color:var(--muted); }
   .amt{ text-align:right; flex-shrink:0; }
+  /* Vagter ligger nu i et kort -> vis som flade rækker med hårfine linjer */
+  #listWrap .list{ gap:0; }
+  #listWrap .list li{ background:transparent; border:0; border-top:1px solid var(--line); border-radius:0; box-shadow:none; padding:13px 2px; }
+  #listWrap .list li:first-child{ border-top:0; padding-top:0; }
+  #listWrap .empty{ background:transparent; border:0; padding:12px 2px; text-align:left; }
 
   .note{ font-size:12px; color:var(--faint); line-height:1.65; padding:4px 4px 0; margin-top:18px; }
   .hidden{ display:none; }
@@ -177,9 +182,9 @@
   </div>
 
   <!-- Liste -->
-  <div id="shiftsWrap">
-    <button class="hist-toggle" id="shiftsToggle"><span id="shiftsTitle">Registrerede vagter</span><span class="car" id="shiftsCaret">▾</span></button>
-    <div id="listWrap" class="hidden" style="margin-top:11px;"></div>
+  <div class="card" id="shiftsWrap">
+    <button class="acc-toggle" id="shiftsToggle"><span id="shiftsTitle">Registrerede vagter</span><span class="car" id="shiftsCaret">▾</span></button>
+    <div id="listWrap" class="hidden" style="margin-top:12px;"></div>
   </div>
 
   <!-- Lønseddel -->
