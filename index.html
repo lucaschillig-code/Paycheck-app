@@ -7,89 +7,120 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Løn">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#0e3a2c">
 <title>Løn &amp; Timer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg:#f1f5f9; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
-    --card:#ffffff; --teal:#0f766e; --teal-d:#115e59;
-    --rose-bg:#fff1f2; --rose:#9f1239; --green-bg:#ecfdf5; --green:#047857;
-    --amber-bg:#fffbeb; --amber:#b45309;
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root{
+    --paper:#eaeee9; --card:#ffffff; --ink:#13241c; --muted:#62726a; --faint:#94a39a;
+    --line:#e0e6dd; --field:#f4f6f2;
+    --pine:#0e3a2c; --pine-2:#13502f; --pine-d:#0a2c20;
+    --keep:#3fcb7e; --keep-soft:#e6f6ee;
+    --d-askat:#e8755a; --d-am:#f0a93f; --d-pension:#d8b36a; --d-atp:#b7a693;
+    --rose:#c2453f; --rose-bg:#fbecea; --green:#1f8f5b; --green-bg:#e6f5ec;
+    --font-display:"Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    color-scheme:light;
   }
-  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
-  .wrap { max-width:460px; margin:0 auto; padding:24px 16px calc(40px + env(safe-area-inset-bottom)); }
-  header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-  .logo { width:40px; height:40px; border-radius:10px; background:var(--teal); color:#fff;
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  h1 { font-size:18px; margin:0; line-height:1.2; }
-  .sub { font-size:12px; color:var(--muted); margin:2px 0 0; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:16px; }
-  h2 { font-size:14px; margin:0 0 12px; }
-  label.fld { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; }
-  input[type=number], input[type=time], input[type=date] {
-    width:100%; border:1px solid #cbd5e1; border-radius:9px; padding:11px 12px; font-size:16px;
-    background:#fff; color:var(--ink); }
-  input:focus { outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(15,118,110,.18); }
-  .mono { font-variant-numeric:tabular-nums; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
-  .rate-row { display:flex; align-items:center; gap:10px; }
-  .rate-row .unit { font-size:14px; color:var(--muted); white-space:nowrap; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
-  .full { grid-column:1 / -1; }
-  .fhelp { font-size:11px; color:#94a3b8; margin:5px 2px 0; line-height:1.45; }
-  .toggle { display:flex; align-items:flex-start; gap:10px; margin-top:14px; font-size:13px; color:var(--ink); cursor:pointer; }
-  .toggle input { width:20px; height:20px; margin:1px 0 0; accent-color:var(--teal); flex-shrink:0; }
-  button.primary { width:100%; border:0; background:var(--teal); color:#fff; border-radius:9px;
-    padding:13px; font-size:15px; font-weight:600; cursor:pointer; }
-  button.primary:active { background:var(--teal-d); }
-  button.dark { width:100%; border:0; background:var(--ink); color:#fff; border-radius:9px;
-    padding:13px; font-size:15px; font-weight:600; cursor:pointer; }
-  button.dark:disabled { opacity:.3; }
-  .hero { background:var(--ink); color:#fff; border-radius:14px; padding:20px; margin-bottom:16px; }
-  .hero .lbl { font-size:12px; color:#94a3b8; margin:0 0 4px; }
-  .hero .big { font-size:36px; font-weight:600; letter-spacing:-.5px; margin:0 0 6px; }
-  .hero .meta { font-size:13px; color:#cbd5e1; margin:0; }
-  .hero .gross { font-size:12px; color:#94a3b8; margin:8px 0 0; }
-  ul.list { list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
-  ul.list li { display:flex; align-items:center; gap:12px; padding:12px 14px; border-top:1px solid #f1f5f9; }
-  ul.list li:first-child { border-top:0; }
-  .li-main { flex:1; min-width:0; }
-  .li-date { font-size:14px; font-weight:600; }
-  .li-sub { font-size:12px; color:var(--muted); margin-top:2px; }
-  .li-tags { font-size:11px; color:var(--teal); margin-top:3px; font-weight:600; }
-  .del { background:none; border:0; color:#94a3b8; padding:6px; cursor:pointer; font-size:18px; line-height:1; }
-  .del:active { color:var(--rose); }
-  .empty { background:var(--card); border:1px dashed #cbd5e1; border-radius:14px; padding:22px; text-align:center; font-size:13px; color:var(--muted); }
-  .sec-h { font-size:14px; font-weight:600; margin:0 0 8px; padding:0 2px; }
-  .help { font-size:12px; color:var(--muted); margin:0 0 12px; }
-  .result { border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:12px 0; }
-  .rrow { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:14px; }
-  .rrow:last-child { border-bottom:0; }
-  .rrow .k { color:var(--muted); }
-  .rrow.sub .k { padding-left:12px; font-size:13px; }
-  .rrow.sub { padding-top:7px; padding-bottom:7px; }
-  .rrow .neg { color:var(--rose); }
-  .rtotal { display:flex; justify-content:space-between; padding:12px; font-weight:700; font-size:14px; }
-  .ok { background:var(--green-bg); color:var(--green); }
-  .bad { background:var(--rose-bg); color:var(--rose); }
-  .net-total { background:#f0fdfa; color:var(--teal-d); }
-  .hist-toggle, .acc-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none;
-    border:0; padding:8px 2px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; }
-  .acc-toggle { padding:2px; margin-bottom:2px; }
-  .hist li { display:flex; justify-content:space-between; align-items:center; }
-  .hist .amt { text-align:right; }
-  .note { font-size:12px; color:#94a3b8; line-height:1.6; padding:0 2px; margin-top:20px; }
-  .flag { background:var(--amber-bg); color:var(--amber); border:1px solid #fde68a; border-radius:10px;
-    padding:10px 12px; font-size:12px; line-height:1.5; margin-top:12px; }
-  .hidden { display:none; }
+  html,body{ margin:0; padding:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:460px; margin:0 auto; padding: max(20px, calc(env(safe-area-inset-top) + 10px)) 16px calc(48px + env(safe-area-inset-bottom)); }
+
+  .mono{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+  h1,h2,.big,.acc-toggle,.hist-toggle,.sec-h,.primary,.dark,.li-date,.rtotal{ font-family:var(--font-display); }
+
+  /* Header */
+  header{ display:flex; align-items:center; gap:13px; margin:0 0 20px; }
+  .logo{ width:44px; height:44px; border-radius:13px; background:var(--pine); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 8px 20px -10px rgba(14,58,44,.7); }
+  h1{ font-size:19px; font-weight:700; margin:0; line-height:1.1; letter-spacing:-.2px; }
+  .sub{ font-size:12.5px; color:var(--muted); margin:3px 0 0; }
+
+  /* Cards */
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px; box-shadow:0 1px 2px rgba(16,40,30,.04), 0 18px 30px -26px rgba(16,40,30,.25); }
+  h2{ font-size:15px; font-weight:600; margin:0 0 14px; letter-spacing:-.2px; }
+
+  /* Hero */
+  .hero{ background:linear-gradient(155deg,var(--pine-2),var(--pine) 70%); color:#fff; border-radius:22px; padding:22px 22px 20px; margin-bottom:15px; box-shadow:0 22px 44px -24px rgba(14,58,44,.85); }
+  .hero .eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:.14em; color:rgba(216,243,228,.82); margin:0 0 9px; font-weight:600; }
+  .hero .big{ font-weight:700; font-size:clamp(42px,13.5vw,55px); line-height:.98; letter-spacing:-1.3px; margin:0 0 17px; color:#fff; font-variant-numeric:tabular-nums; }
+  .flowbar{ display:flex; gap:2px; height:13px; border-radius:7px; overflow:hidden; margin:0 0 11px; background:rgba(255,255,255,.12); }
+  .flowbar .seg{ height:100%; min-width:2px; }
+  .flowlegend{ display:flex; flex-wrap:wrap; gap:8px 14px; margin:0 0 15px; }
+  .flowlegend .lg{ display:inline-flex; align-items:center; gap:6px; font-size:11px; color:rgba(234,240,236,.86); }
+  .flowlegend .lg i{ width:9px; height:9px; border-radius:3px; display:inline-block; flex-shrink:0; }
+  .hero .meta{ font-size:12.5px; color:rgba(234,240,236,.72); margin:0; font-variant-numeric:tabular-nums; }
+
+  /* Fields */
+  .fld{ display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  input[type=number], input[type=time], input[type=date]{ width:100%; border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:16px; background:var(--field); color:var(--ink); font-family:var(--font-mono); }
+  input[type=date], input[type=time]{ font-family:var(--font-body); }
+  input:focus{ outline:none; border-color:var(--keep); background:#fff; box-shadow:0 0 0 3px rgba(63,203,126,.2); }
+  .rate-row{ display:flex; align-items:center; gap:10px; }
+  .rate-row .unit{ font-size:13px; color:var(--muted); white-space:nowrap; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .full{ grid-column:1 / -1; }
+  .capcell{ display:flex; align-items:flex-end; padding-bottom:13px; font-size:12px; color:var(--faint); line-height:1.3; }
+  .grp-h{ font-size:11px; text-transform:uppercase; letter-spacing:.09em; color:var(--faint); font-weight:700; margin:16px 2px 9px; }
+  .grp-h:first-child{ margin-top:2px; }
+  .fhelp{ font-size:12px; color:var(--faint); line-height:1.55; margin:11px 2px 0; }
+  .help{ font-size:13px; color:var(--muted); margin:0; line-height:1.5; }
+
+  .toggle{ display:flex; align-items:flex-start; gap:11px; margin-top:15px; font-size:13px; color:var(--ink); cursor:pointer; line-height:1.45; }
+  .toggle input{ width:21px; height:21px; margin:0; accent-color:var(--pine); flex-shrink:0; }
+
+  /* Buttons */
+  .primary{ width:100%; border:0; background:var(--pine); color:#fff; border-radius:13px; padding:14px; font-size:15px; font-weight:600; cursor:pointer; margin-top:15px; letter-spacing:.1px; }
+  .primary:active{ background:var(--pine-d); }
+  .dark{ width:100%; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:13px; padding:13px; font-size:14px; font-weight:600; cursor:pointer; margin-top:13px; }
+  .dark:disabled{ opacity:.45; }
+  .dark:not(:disabled):active{ background:#eceee8; }
+
+  /* Accordions */
+  .acc-toggle, .hist-toggle{ width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:0; padding:2px; font-size:15px; font-weight:600; color:var(--ink); cursor:pointer; }
+  .acc-toggle .car, .hist-toggle .car{ color:var(--faint); font-size:13px; }
+
+  /* Breakdown (receipt) */
+  .result{ margin:2px 0; }
+  .rrow{ display:flex; align-items:baseline; padding:9px 0; font-size:14px; }
+  .rrow .k{ display:flex; align-items:baseline; flex:1 1 auto; min-width:0; color:var(--muted); }
+  .rrow .k::after{ content:""; flex:1 1 auto; margin:0 9px; border-bottom:1.5px dotted var(--line); transform:translateY(-3px); }
+  .rrow .mono{ flex:0 0 auto; color:var(--ink); }
+  .rrow b{ color:var(--ink); font-weight:700; }
+  .rrow.sub{ padding:5px 0; }
+  .rrow.sub .k{ padding-left:14px; color:var(--faint); font-size:13px; }
+  .rrow.sub .mono{ color:var(--muted); font-size:13px; }
+  .rrow .neg{ color:var(--muted); }
+  .rtotal{ display:flex; justify-content:space-between; align-items:center; margin-top:11px; padding:14px 16px; border-radius:13px; font-weight:700; font-size:15px; }
+  .net-total{ background:var(--keep-soft); color:var(--pine); }
+  .net-total .mono{ color:var(--pine); }
+  .ok{ background:var(--green-bg); color:var(--green); }
+  .bad{ background:var(--rose-bg); color:var(--rose); }
+
+  /* Lists */
+  .sec-h{ font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:2px 0 11px; padding:0 2px; }
+  .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .list li{ display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:15px; padding:13px 15px; box-shadow:0 1px 2px rgba(16,40,30,.03); }
+  .li-main{ flex:1; min-width:0; }
+  .li-date{ font-size:14px; font-weight:600; color:var(--ink); }
+  .li-sub{ font-size:12px; color:var(--muted); margin-top:3px; }
+  .li-tags{ font-size:11px; color:var(--pine); margin-top:4px; font-weight:600; }
+  .del{ background:none; border:0; color:var(--faint); padding:6px; cursor:pointer; font-size:17px; line-height:1; }
+  .del:active{ color:var(--rose); }
+  .empty{ background:var(--card); border:1px dashed #cdd6cb; border-radius:15px; padding:24px; text-align:center; font-size:13px; color:var(--muted); }
+  .amt{ text-align:right; flex-shrink:0; }
+
+  .note{ font-size:12px; color:var(--faint); line-height:1.65; padding:4px 4px 0; margin-top:18px; }
+  .hidden{ display:none; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="logo">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
     </div>
     <div>
       <h1>Løn &amp; Timer</h1>
@@ -97,55 +128,31 @@
     </div>
   </header>
 
-  <!-- Satser -->
+  <!-- Hero -->
+  <div class="hero">
+    <p class="eyebrow">Udbetalt · denne periode</p>
+    <p class="big" id="net">0,00 kr.</p>
+    <div class="flowbar" id="flowBar"></div>
+    <div class="flowlegend" id="flowLegend"></div>
+    <p class="meta" id="meta">0 vagter · 0t 0m</p>
+  </div>
+
+  <!-- Din løn -->
   <div class="card">
     <label class="fld">Din timeløn</label>
     <div class="rate-row">
-      <input id="rate" type="number" inputmode="decimal" min="0" step="0.01" class="mono" placeholder="0,00">
+      <input id="rate" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00">
       <span class="unit">kr. / time</span>
     </div>
     <label class="toggle">
       <input id="breakToggle" type="checkbox" checked>
       <span>Træk 30 min ubetalt pause fra ved vagter over 5 timer</span>
     </label>
-
-    <button class="acc-toggle" id="ratesToggle" style="margin-top:14px;">
-      <span>Tillæg &amp; satser</span><span id="ratesCaret">▾</span>
-    </button>
-    <div id="ratesBody" class="hidden" style="margin-top:6px;">
-      <div class="grid2">
-        <div>
-          <label class="fld">Aftentillæg</label>
-          <input id="rAften" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
-        </div>
-        <div>
-          <label class="fld">Aften starter</label>
-          <input id="eveningStart" type="time" step="3600">
-        </div>
-        <div>
-          <label class="fld">Lørdagstillæg</label>
-          <input id="rLor" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
-        </div>
-        <div>
-          <label class="fld">Lørdag starter</label>
-          <input id="satStart" type="time" step="900">
-        </div>
-        <div>
-          <label class="fld">Søndagstillæg</label>
-          <input id="rSon" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
-        </div>
-        <div>
-          <label class="fld">Nattillæg (efter 23)</label>
-          <input id="rNat" type="number" inputmode="decimal" min="0" step="0.01" class="mono">
-        </div>
-      </div>
-      <p class="fhelp">Efter butiksoverenskomsten udløses tillæg hverdage fra kl. 18 (og en højere nattakst fra kl. 23), lørdag fra kl. 15 og søndag hele dagen. Appen fordeler selv dine vagttimer i de bånd — hver time får grundløn + højst ét tillæg.</p>
-    </div>
   </div>
 
-  <!-- Registrér vagt -->
+  <!-- Tilføj vagt -->
   <div class="card">
-    <h2>Registrér en vagt</h2>
+    <h2>Tilføj vagt</h2>
     <div class="grid2">
       <div class="full">
         <label class="fld">Dato</label>
@@ -160,15 +167,7 @@
         <input id="end" type="time">
       </div>
     </div>
-    <button class="primary" id="addBtn">+ Tilføj vagt</button>
-  </div>
-
-  <!-- Hero -->
-  <div class="hero">
-    <p class="lbl">Denne periode — udbetalt ca.</p>
-    <p class="big mono" id="net">0,00 kr.</p>
-    <p class="meta" id="meta">0 vagter · 0t 0m</p>
-    <p class="gross mono" id="grossLine"></p>
+    <button class="primary" id="addBtn">Tilføj vagt</button>
   </div>
 
   <!-- Beregning -->
@@ -177,51 +176,93 @@
     <div id="calcWrap"></div>
   </div>
 
-  <!-- Skat & fradrag -->
-  <div class="card">
-    <button class="acc-toggle" id="taxToggle"><span>Skat &amp; fradrag</span><span id="taxCaret">▾</span></button>
-    <div id="taxBody" class="hidden" style="margin-top:10px;">
-      <div class="grid2">
-        <div>
-          <label class="fld">Trækprocent</label>
-          <div class="rate-row"><input id="traek" type="number" inputmode="decimal" min="0" step="0.1" class="mono"><span class="unit">%</span></div>
-        </div>
-        <div>
-          <label class="fld">ATP pr. periode</label>
-          <div class="rate-row"><input id="atp" type="number" inputmode="decimal" min="0" step="1" class="mono"><span class="unit">kr.</span></div>
-        </div>
-      </div>
-      <label class="fld">Fradrag pr. lønperiode</label>
-      <div class="rate-row" style="margin-bottom:2px;"><input id="fradrag" type="number" inputmode="decimal" min="0" step="1" class="mono"><span class="unit">kr.</span></div>
-      <p class="fhelp">Trækprocent og fradrag står på dit skattekort / din forskudsopgørelse (på sedlen: 38% og 4.503 kr. for en måned).</p>
-      <label class="fld" style="margin-top:12px;">Egen pension</label>
-      <div class="rate-row"><input id="pension" type="number" inputmode="decimal" min="0" step="0.1" class="mono"><span class="unit">% af løn</span></div>
-      <p class="fhelp">Din seddel viser 1,8% — men af en højere basis (inkl. ferieberettiget løn). ~2,2% af bruttolønnen rammer det samme beløb.</p>
-    </div>
+  <!-- Liste -->
+  <div id="shiftsWrap">
+    <button class="hist-toggle" id="shiftsToggle"><span id="shiftsTitle">Registrerede vagter</span><span class="car" id="shiftsCaret">▾</span></button>
+    <div id="listWrap" class="hidden" style="margin-top:11px;"></div>
   </div>
 
-  <!-- Liste -->
-  <p class="sec-h">Registrerede vagter</p>
-  <div id="listWrap"></div>
-
   <!-- Lønseddel -->
-  <div class="card" style="margin-top:16px;">
+  <div class="card" style="margin-top:15px;">
     <h2>Tjek din lønseddel</h2>
-    <p class="help">Indtast det beløb der blev <b>overført til din konto</b> (udbetalt, efter skat).</p>
+    <p class="help" style="margin-bottom:13px;">Indtast det beløb der blev overført til din konto (udbetalt, efter skat).</p>
     <label class="fld">Overført til konto</label>
-    <input id="paycheck" type="number" inputmode="decimal" min="0" step="0.01" class="mono" placeholder="0,00" style="margin-bottom:12px;">
+    <input id="paycheck" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00" style="margin-bottom:13px;">
     <div id="resultWrap"></div>
     <button class="dark" id="closeBtn" disabled>Gem &amp; start ny periode</button>
   </div>
 
+  <!-- Tillæg & satser -->
+  <div class="card">
+    <button class="acc-toggle" id="ratesToggle"><span>Tillæg &amp; satser</span><span class="car" id="ratesCaret">▾</span></button>
+    <div id="ratesBody" class="hidden" style="margin-top:6px;">
+      <div class="grp-h">Hverdag</div>
+      <div class="grid2">
+        <div>
+          <label class="fld">Aftentillæg</label>
+          <input id="rAften" type="number" inputmode="decimal" min="0" step="0.01">
+        </div>
+        <div>
+          <label class="fld">Aften fra</label>
+          <input id="eveningStart" type="time" step="3600">
+        </div>
+        <div>
+          <label class="fld">Nattillæg</label>
+          <input id="rNat" type="number" inputmode="decimal" min="0" step="0.01">
+        </div>
+        <div class="capcell">Udløses automatisk efter kl. 23</div>
+      </div>
+      <div class="grp-h">Weekend</div>
+      <div class="grid2">
+        <div>
+          <label class="fld">Lørdagstillæg</label>
+          <input id="rLor" type="number" inputmode="decimal" min="0" step="0.01">
+        </div>
+        <div>
+          <label class="fld">Lørdag fra</label>
+          <input id="satStart" type="time" step="900">
+        </div>
+        <div>
+          <label class="fld">Søndagstillæg</label>
+          <input id="rSon" type="number" inputmode="decimal" min="0" step="0.01">
+        </div>
+        <div class="capcell">Gælder hele søndagen</div>
+      </div>
+      <p class="fhelp">Satser pr. time efter butiksoverenskomsten. Appen fordeler selv dine vagttimer i bånd — hver time får grundløn + højst ét tillæg. Nattillæg og aftentillæg er kun for hverdage.</p>
+    </div>
+  </div>
+
+  <!-- Skat & fradrag -->
+  <div class="card">
+    <button class="acc-toggle" id="taxToggle"><span>Skat &amp; fradrag</span><span class="car" id="taxCaret">▾</span></button>
+    <div id="taxBody" class="hidden" style="margin-top:12px;">
+      <div class="grid2">
+        <div>
+          <label class="fld">Trækprocent</label>
+          <div class="rate-row"><input id="traek" type="number" inputmode="decimal" min="0" step="0.1"><span class="unit">%</span></div>
+        </div>
+        <div>
+          <label class="fld">ATP pr. periode</label>
+          <div class="rate-row"><input id="atp" type="number" inputmode="decimal" min="0" step="1"><span class="unit">kr.</span></div>
+        </div>
+      </div>
+      <label class="fld" style="margin-top:12px;">Fradrag pr. lønperiode</label>
+      <div class="rate-row"><input id="fradrag" type="number" inputmode="decimal" min="0" step="1"><span class="unit">kr.</span></div>
+      <p class="fhelp">Trækprocent og fradrag står på dit skattekort / din forskudsopgørelse (på sedlen: 38% og 4.503 kr. for en måned).</p>
+      <label class="fld" style="margin-top:14px;">Egen pension</label>
+      <div class="rate-row"><input id="pension" type="number" inputmode="decimal" min="0" step="0.1"><span class="unit">% af løn</span></div>
+      <p class="fhelp">Din seddel viser 1,8% — men af en højere basis (inkl. ferieberettiget løn). ~2,2% af bruttolønnen rammer det samme beløb.</p>
+    </div>
+  </div>
+
   <!-- Historik -->
   <div id="histWrap" class="hidden">
-    <button class="hist-toggle" id="histToggle"><span id="histTitle">Tidligere perioder</span><span id="histCaret">▾</span></button>
-    <ul class="list hist hidden" id="histList"></ul>
+    <button class="hist-toggle" id="histToggle"><span id="histTitle">Tidligere perioder</span><span class="car" id="histCaret">▾</span></button>
+    <ul class="list hist hidden" id="histList" style="margin-top:10px;"></ul>
   </div>
 
   <p class="note">
-    Tallet er et <b>estimat</b> af din udbetaling: bruttoløn minus ATP, pension, AM-bidrag (8%) og A-skat. Tillæg følger butiksoverenskomsten (hverdag fra 18, nat fra 23, lørdag fra 15, søndag hele dagen). Mertid er regnet med, fordi den udbetales til normal timeløn. Sygeløn, feriepenge fra FerieKonto og SH/fritvalg er ikke regnet med automatisk. Krydser en vagt midnat regnes det automatisk. Dine data gemmes kun på denne enhed.
+    Tallet er et estimat af din udbetaling: bruttoløn minus ATP, pension, AM-bidrag (8%) og A-skat. Tillæg følger butiksoverenskomsten (hverdag fra 18, nat fra 23, lørdag fra 15, søndag hele dagen). Mertid er regnet med, fordi den udbetales til normal timeløn. Sygeløn, feriepenge fra FerieKonto og SH/fritvalg er ikke regnet med automatisk. Krydser en vagt midnat regnes det automatisk. Dine data gemmes kun på denne enhed.
   </p>
 </div>
 
@@ -251,7 +292,7 @@ let state = {
   rate:"", deductBreak:true, paycheck:"", entries:[], history:[], showHist:false,
   rAften:DEF.rAften, rLor:DEF.rLor, rSon:DEF.rSon, rNat:DEF.rNat, eveningStart:DEF.eveningStart, satStart:DEF.satStart,
   traek:DEF.traek, fradrag:DEF.fradrag, atp:DEF.atp, pension:DEF.pension,
-  showRates:false, showTax:false
+  showRates:false, showTax:false, showShifts:false
 };
 
 const dkk = new Intl.NumberFormat("da-DK",{style:"currency",currency:"DKK"});
@@ -349,9 +390,26 @@ function renderAll(){
 
   // hero
   document.getElementById("net").textContent = money(t.gross>0 ? t.net : 0);
-  document.getElementById("meta").textContent =
-    `${state.entries.length} ${state.entries.length===1?"vagt":"vagter"} · ${dur(t.base)} betalt tid`;
-  document.getElementById("grossLine").textContent = t.gross>0 ? `Brutto ${money(t.gross)}` : "";
+  const vagtTxt = `${state.entries.length} ${state.entries.length===1?"vagt":"vagter"} · ${dur(t.base)}`;
+  document.getElementById("meta").textContent = t.gross>0 ? `Brutto ${money(t.gross)} · ${vagtTxt}` : vagtTxt;
+
+  // flow-bar: brutto -> udbetalt
+  const fb = document.getElementById("flowBar");
+  const fl = document.getElementById("flowLegend");
+  if(t.gross>0){
+    const segs = [
+      { k:"Udbetalt", v:t.net,     c:"var(--keep)" },
+      { k:"A-skat",   v:t.askat,   c:"var(--d-askat)" },
+      { k:"AM",       v:t.am,      c:"var(--d-am)" },
+      { k:"Pension",  v:t.pension, c:"var(--d-pension)" },
+      { k:"ATP",      v:t.atp,     c:"var(--d-atp)" }
+    ].filter(s=>s.v>0.005);
+    fb.innerHTML = segs.map(s=>`<span class="seg" style="flex:${s.v};background:${s.c}"></span>`).join("");
+    fl.innerHTML = segs.map(s=>`<span class="lg"><i style="background:${s.c}"></i>${s.k}</span>`).join("");
+  } else {
+    fb.innerHTML = `<span class="seg" style="flex:1;background:rgba(255,255,255,.14)"></span>`;
+    fl.innerHTML = "";
+  }
 
   // beregning
   const cw = document.getElementById("calcWrap");
@@ -407,6 +465,9 @@ function renderAll(){
       </li>`;
     }).join("") + `</ul>`;
   }
+  document.getElementById("shiftsTitle").textContent = `Registrerede vagter (${state.entries.length})`;
+  document.getElementById("shiftsCaret").textContent = state.showShifts ? "▴" : "▾";
+  lw.classList.toggle("hidden", !state.showShifts);
 
   // resultat (sammenlign mod netto)
   const rw = document.getElementById("resultWrap");
@@ -429,7 +490,7 @@ function renderAll(){
       <div class="rrow"><span class="k">Overført til konto</span><span class="mono">${money(pc)}</span></div>
       <div class="rtotal ${cls}"><span>${txt}</span><span class="mono">${amt}</span></div>
     </div>
-    <p class="fhelp">Lille forskel er normalt (afrunding, ATP-trin, pensionsbasis). Vil du tjekke om arbejdsgiveren har betalt rigtigt, er det mest sikkert at sammenligne <b>brutto</b> (${money(t.gross)}) med bruttosummen på sedlen.</p>`;
+    <p class="fhelp">Lille forskel er normalt (afrunding, ATP-trin, pensionsbasis). Vil du tjekke om arbejdsgiveren har betalt rigtigt, er det mest sikkert at sammenligne brutto (${money(t.gross)}) med bruttosummen på sedlen.</p>`;
   } else {
     rw.innerHTML = `<p class="help">Indtast det overførte beløb ovenfor for at se forskellen.</p>`;
   }
@@ -469,6 +530,7 @@ function addEntry(){
   const end = document.getElementById("end").value;
   if(shiftMin(start,end)==null) return;
   state.entries.unshift({ id:Date.now(), date, start, end });
+  state.showShifts = true;
   document.getElementById("start").value = "";
   document.getElementById("end").value = "";
   save(); renderAll();
@@ -548,6 +610,7 @@ async function init(){
   document.getElementById("addBtn").addEventListener("click", addEntry);
   document.getElementById("closeBtn").addEventListener("click", closePeriod);
   document.getElementById("histToggle").addEventListener("click", ()=>{ state.showHist=!state.showHist; renderAll(); });
+  document.getElementById("shiftsToggle").addEventListener("click", ()=>{ state.showShifts=!state.showShifts; renderAll(); });
   bindAcc("ratesToggle","ratesBody","ratesCaret","showRates");
   bindAcc("taxToggle","taxBody","taxCaret","showTax");
   document.getElementById("listWrap").addEventListener("click", e=>{
