@@ -15,109 +15,113 @@
 <style>
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   :root{
-    --paper:#eaeee9; --card:#ffffff; --ink:#13241c; --muted:#62726a; --faint:#94a39a;
-    --line:#e0e6dd; --field:#f4f6f2;
+    --bg:#ebeee9; --card:#ffffff; --ink:#16201b; --ink-2:#5f6d65; --ink-3:#9aa69d;
+    --sep:#e4e8e1; --field:#f3f5f1;
     --pine:#0e3a2c; --pine-2:#13502f; --pine-d:#0a2c20;
-    --keep:#3fcb7e; --keep-soft:#e6f6ee;
+    --keep:#34c06e; --keep-soft:#e7f6ed;
     --d-askat:#e8755a; --d-am:#f0a93f; --d-pension:#d8b36a; --d-atp:#b7a693;
-    --rose:#c2453f; --rose-bg:#fbecea; --green:#1f8f5b; --green-bg:#e6f5ec;
-    --font-display:"Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --font-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --rose:#c2453f; --rose-bg:#fbeceb; --green:#1f8f5b; --green-bg:#e7f5ed;
+    --fig:"Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
     color-scheme:light;
   }
-  html,body{ margin:0; padding:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
-  .wrap{ max-width:460px; margin:0 auto; padding: max(20px, calc(env(safe-area-inset-top) + 10px)) 16px calc(48px + env(safe-area-inset-bottom)); }
-
-  .mono{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
-  h1,h2,.big,.acc-toggle,.hist-toggle,.sec-h,.primary,.dark,.li-date,.rtotal{ font-family:var(--font-display); }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--ui); -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; letter-spacing:-.01em; }
+  .wrap{ max-width:460px; margin:0 auto; padding: max(22px, calc(env(safe-area-inset-top) + 12px)) 16px calc(48px + env(safe-area-inset-bottom)); animation: rise .55s cubic-bezier(.22,.61,.36,1) both; }
+  @keyframes rise{ from{ opacity:0; transform:translateY(10px) } to{ opacity:1; transform:none } }
+  .mono{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  h1,.big,#cycleLabel{ font-family:var(--fig); }
 
   /* Header */
-  header{ display:flex; align-items:center; gap:13px; margin:0 0 20px; }
-  .logo{ width:44px; height:44px; border-radius:13px; background:var(--pine); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 8px 20px -10px rgba(14,58,44,.7); }
-  h1{ font-size:19px; font-weight:700; margin:0; line-height:1.1; letter-spacing:-.2px; }
-  .sub{ font-size:12.5px; color:var(--muted); margin:3px 0 0; }
+  header{ display:flex; align-items:center; gap:13px; margin:2px 0 22px; }
+  .logo{ width:46px; height:46px; border-radius:14px; background:linear-gradient(160deg,var(--pine-2),var(--pine)); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 10px 22px -10px rgba(14,58,44,.6); }
+  h1{ font-size:22px; font-weight:700; margin:0; line-height:1.05; letter-spacing:-.4px; }
+  .sub{ font-size:13px; color:var(--ink-2); margin:3px 0 0; letter-spacing:-.1px; }
 
-  /* Cards */
-  .card{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px; box-shadow:0 1px 2px rgba(16,40,30,.04), 0 18px 30px -26px rgba(16,40,30,.25); }
-  h2{ font-size:15px; font-weight:600; margin:0 0 14px; letter-spacing:-.2px; }
+  /* Grouped sections (iOS inset) */
+  .group-h{ font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-3); margin:18px 6px 8px; }
+  .group{ background:var(--card); border-radius:16px; padding:16px; margin:0 0 4px; box-shadow:0 1px 2px rgba(16,40,30,.05); }
 
-  /* Hero */
-  .hero{ background:linear-gradient(155deg,var(--pine-2),var(--pine) 70%); color:#fff; border-radius:22px; padding:22px 22px 20px; margin-bottom:15px; box-shadow:0 22px 44px -24px rgba(14,58,44,.85); }
-  .hero .eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:.14em; color:rgba(216,243,228,.82); margin:0 0 9px; font-weight:600; }
-  .hero .big{ font-weight:700; font-size:clamp(42px,13.5vw,55px); line-height:.98; letter-spacing:-1.3px; margin:0 0 17px; color:#fff; font-variant-numeric:tabular-nums; }
-  .flowbar{ display:flex; gap:2px; height:13px; border-radius:7px; overflow:hidden; margin:0 0 11px; background:rgba(255,255,255,.12); }
+  /* Hero card */
+  .hero{ position:relative; overflow:hidden; background:linear-gradient(158deg,var(--pine-2),var(--pine) 74%); color:#fff; border-radius:24px; padding:20px 22px; margin:0 0 6px; box-shadow:0 26px 50px -26px rgba(14,58,44,.95); }
+  .hero::before{ content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 42%); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
+  .hero::after{ content:""; position:absolute; top:-45%; right:-25%; width:75%; height:130%; background:radial-gradient(closest-side, rgba(52,192,110,.22), transparent); pointer-events:none; }
+  .hero > *{ position:relative; }
+  .cyclenav{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 18px; }
+  .cyc-arrow{ width:32px; height:32px; flex-shrink:0; border:0; border-radius:50%; background:rgba(255,255,255,.14); color:#fff; font-size:17px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s, transform .1s; }
+  .cyc-arrow:active{ background:rgba(255,255,255,.26); transform:scale(.92); }
+  .cyc-label{ flex:1; display:flex; flex-direction:column; align-items:center; }
+  .cyc-eyebrow{ font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:rgba(220,244,230,.7); margin-bottom:3px; font-weight:600; }
+  #cycleLabel{ font-weight:600; font-size:15px; color:#fff; letter-spacing:.2px; }
+  .hero .eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:.13em; color:rgba(220,244,230,.82); margin:0 0 6px; font-weight:600; }
+  .hero .big{ font-weight:700; font-size:clamp(46px,14.5vw,58px); line-height:.95; letter-spacing:-1.6px; margin:0 0 18px; color:#fff; font-variant-numeric:tabular-nums; }
+  .flowbar{ display:flex; gap:2px; height:12px; border-radius:6px; overflow:hidden; margin:0 0 12px; background:rgba(255,255,255,.13); }
   .flowbar .seg{ height:100%; min-width:2px; }
-  .flowlegend{ display:flex; flex-wrap:wrap; gap:8px 14px; margin:0 0 15px; }
-  .flowlegend .lg{ display:inline-flex; align-items:center; gap:6px; font-size:11px; color:rgba(234,240,236,.86); }
-  .flowlegend .lg i{ width:9px; height:9px; border-radius:3px; display:inline-block; flex-shrink:0; }
-  .hero .meta{ font-size:12.5px; color:rgba(234,240,236,.72); margin:0; font-variant-numeric:tabular-nums; }
+  .flowlegend{ display:flex; flex-wrap:wrap; gap:8px 14px; margin:0 0 16px; }
+  .flowlegend .lg{ display:inline-flex; align-items:center; gap:6px; font-size:11px; color:rgba(235,242,237,.86); letter-spacing:0; }
+  .flowlegend .lg i{ width:8px; height:8px; border-radius:2.5px; display:inline-block; flex-shrink:0; }
+  .hero .meta{ font-size:12.5px; color:rgba(235,242,237,.7); margin:0; font-variant-numeric:tabular-nums; letter-spacing:0; }
 
   /* Fields */
-  .fld{ display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; }
-  input[type=number], input[type=time], input[type=date]{ width:100%; border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:16px; background:var(--field); color:var(--ink); font-family:var(--font-mono); }
-  input[type=date], input[type=time]{ font-family:var(--font-body); }
-  input:focus{ outline:none; border-color:var(--keep); background:#fff; box-shadow:0 0 0 3px rgba(63,203,126,.2); }
+  .fld{ display:block; font-size:12.5px; font-weight:500; color:var(--ink-2); margin-bottom:7px; letter-spacing:-.1px; }
+  input[type=number], input[type=time], input[type=date]{ width:100%; border:1px solid var(--sep); border-radius:11px; padding:12px 13px; font-size:16px; background:var(--field); color:var(--ink); font-family:var(--mono); transition:border-color .18s, box-shadow .18s, background .18s; }
+  input[type=date], input[type=time]{ font-family:var(--ui); }
+  input:focus{ outline:none; border-color:var(--keep); background:#fff; box-shadow:inset 0 0 0 1px var(--keep); }
   .rate-row{ display:flex; align-items:center; gap:10px; }
-  .rate-row .unit{ font-size:13px; color:var(--muted); white-space:nowrap; }
+  .rate-row .unit{ font-size:13px; color:var(--ink-2); white-space:nowrap; }
   .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .full{ grid-column:1 / -1; }
-  .capcell{ display:flex; align-items:flex-end; padding-bottom:13px; font-size:12px; color:var(--faint); line-height:1.3; }
-  .grp-h{ font-size:11px; text-transform:uppercase; letter-spacing:.09em; color:var(--faint); font-weight:700; margin:16px 2px 9px; }
+  .capcell{ display:flex; align-items:flex-end; padding-bottom:13px; font-size:12px; color:var(--ink-3); line-height:1.3; }
+  .grp-h{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); font-weight:700; margin:16px 2px 9px; }
   .grp-h:first-child{ margin-top:2px; }
-  .fhelp{ font-size:12px; color:var(--faint); line-height:1.55; margin:11px 2px 0; }
-  .help{ font-size:13px; color:var(--muted); margin:0; line-height:1.5; }
-
-  .toggle{ display:flex; align-items:flex-start; gap:11px; margin-top:15px; font-size:13px; color:var(--ink); cursor:pointer; line-height:1.45; }
+  .fhelp{ font-size:12px; color:var(--ink-3); line-height:1.55; margin:11px 2px 0; }
+  .help{ font-size:13px; color:var(--ink-2); margin:0; line-height:1.5; }
+  .help b{ color:var(--ink); font-weight:600; }
+  .toggle{ display:flex; align-items:flex-start; gap:11px; margin-top:15px; font-size:14px; color:var(--ink); cursor:pointer; line-height:1.4; }
   .toggle input{ width:21px; height:21px; margin:0; accent-color:var(--pine); flex-shrink:0; }
 
   /* Buttons */
-  .primary{ width:100%; border:0; background:var(--pine); color:#fff; border-radius:13px; padding:14px; font-size:15px; font-weight:600; cursor:pointer; margin-top:15px; letter-spacing:.1px; }
-  .primary:active{ background:var(--pine-d); }
-  .dark{ width:100%; border:1px solid var(--line); background:var(--field); color:var(--ink); border-radius:13px; padding:13px; font-size:14px; font-weight:600; cursor:pointer; margin-top:13px; }
-  .dark:disabled{ opacity:.45; }
-  .dark:not(:disabled):active{ background:#eceee8; }
+  .primary{ width:100%; border:0; background:var(--pine); color:#fff; border-radius:13px; padding:14px; font-size:16px; font-weight:600; cursor:pointer; margin-top:16px; letter-spacing:-.1px; transition:background .18s, transform .1s; }
+  .primary:active{ background:var(--pine-d); transform:scale(.98); }
 
-  /* Accordions */
-  .acc-toggle, .hist-toggle{ width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:0; padding:2px; font-size:15px; font-weight:600; color:var(--ink); cursor:pointer; }
-  .acc-toggle .car, .hist-toggle .car{ color:var(--muted); font-size:14px; }
+  /* Accordions (native disclosure) */
+  .row-toggle{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; background:none; border:0; padding:0; font-family:var(--ui); font-size:16px; font-weight:600; color:var(--ink); cursor:pointer; letter-spacing:-.2px; }
+  .chev{ color:var(--ink-3); flex-shrink:0; transition:transform .32s cubic-bezier(.4,0,.2,1); }
+  .accordion.open .chev{ transform:rotate(90deg); }
+  .acc-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .34s cubic-bezier(.33,1,.68,1); }
+  .accordion.open .acc-body{ grid-template-rows:1fr; }
+  .acc-inner{ overflow:hidden; min-height:0; padding-top:13px; }
 
   /* Breakdown (receipt) */
-  .result{ margin:2px 0; }
+  .result{ margin:0; }
   .rrow{ display:flex; align-items:baseline; padding:9px 0; font-size:14px; }
-  .rrow .k{ display:flex; align-items:baseline; flex:1 1 auto; min-width:0; color:var(--muted); }
-  .rrow .k::after{ content:""; flex:1 1 auto; margin:0 9px; border-bottom:1.5px dotted var(--line); transform:translateY(-3px); }
+  .rrow .k{ display:flex; align-items:baseline; flex:1 1 auto; min-width:0; color:var(--ink-2); }
+  .rrow .k::after{ content:""; flex:1 1 auto; margin:0 9px; border-bottom:1.5px dotted var(--sep); transform:translateY(-3px); }
   .rrow .mono{ flex:0 0 auto; color:var(--ink); }
-  .rrow b{ color:var(--ink); font-weight:700; }
+  .rrow b{ color:var(--ink); font-weight:600; }
   .rrow.sub{ padding:5px 0; }
-  .rrow.sub .k{ padding-left:14px; color:var(--faint); font-size:13px; }
-  .rrow.sub .mono{ color:var(--muted); font-size:13px; }
-  .rrow .neg{ color:var(--muted); }
-  .rtotal{ display:flex; justify-content:space-between; align-items:center; margin-top:11px; padding:14px 16px; border-radius:13px; font-weight:700; font-size:15px; }
+  .rrow.sub .k{ padding-left:14px; color:var(--ink-3); font-size:13px; }
+  .rrow.sub .mono{ color:var(--ink-2); font-size:13px; }
+  .rrow .neg{ color:var(--ink-2); }
+  .rtotal{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding:14px 16px; border-radius:13px; font-weight:600; font-size:15px; letter-spacing:-.2px; }
   .net-total{ background:var(--keep-soft); color:var(--pine); }
-  .net-total .mono{ color:var(--pine); }
+  .net-total .mono{ color:var(--pine); font-weight:700; }
   .ok{ background:var(--green-bg); color:var(--green); }
   .bad{ background:var(--rose-bg); color:var(--rose); }
 
-  /* Lists */
-  .sec-h{ font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:2px 0 11px; padding:0 2px; }
-  .list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
-  .list li{ display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:15px; padding:13px 15px; box-shadow:0 1px 2px rgba(16,40,30,.03); }
+  /* Shift list (flade rækker) */
+  .list{ list-style:none; margin:0; padding:0; }
+  #listWrap .list li{ display:flex; align-items:center; gap:12px; padding:13px 0; border-top:1px solid var(--sep); }
+  #listWrap .list li:first-child{ border-top:0; padding-top:2px; }
   .li-main{ flex:1; min-width:0; }
-  .li-date{ font-size:14px; font-weight:600; color:var(--ink); }
-  .li-sub{ font-size:12px; color:var(--muted); margin-top:3px; }
-  .li-tags{ font-size:11px; color:var(--pine); margin-top:4px; font-weight:600; }
-  .del{ background:none; border:0; color:var(--faint); padding:6px; cursor:pointer; font-size:17px; line-height:1; }
+  .li-date{ font-size:14.5px; font-weight:600; color:var(--ink); letter-spacing:-.2px; }
+  .li-sub{ font-size:12.5px; color:var(--ink-2); margin-top:3px; }
+  .li-tags{ font-size:11.5px; color:var(--pine); margin-top:4px; font-weight:600; }
+  .del{ background:none; border:0; color:var(--ink-3); padding:6px; cursor:pointer; font-size:16px; line-height:1; }
   .del:active{ color:var(--rose); }
-  .empty{ background:var(--card); border:1px dashed #cdd6cb; border-radius:15px; padding:24px; text-align:center; font-size:13px; color:var(--muted); }
-  .amt{ text-align:right; flex-shrink:0; }
-  /* Vagter ligger nu i et kort -> vis som flade rækker med hårfine linjer */
-  #listWrap .list{ gap:0; }
-  #listWrap .list li{ background:transparent; border:0; border-top:1px solid var(--line); border-radius:0; box-shadow:none; padding:13px 2px; }
-  #listWrap .list li:first-child{ border-top:0; padding-top:0; }
-  #listWrap .empty{ background:transparent; border:0; padding:12px 2px; text-align:left; }
+  .empty{ padding:6px 0 2px; font-size:13.5px; color:var(--ink-2); }
 
-  .note{ font-size:12px; color:var(--faint); line-height:1.65; padding:4px 4px 0; margin-top:18px; }
+  .note{ font-size:12px; color:var(--ink-3); line-height:1.65; padding:6px 6px 0; margin-top:16px; }
   .hidden{ display:none; }
 </style>
 </head>
@@ -125,7 +129,7 @@
 <div class="wrap">
   <header>
     <div class="logo">
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
     </div>
     <div>
       <h1>Løn &amp; Timer</h1>
@@ -135,15 +139,24 @@
 
   <!-- Hero -->
   <div class="hero">
-    <p class="eyebrow">Udbetalt · denne periode</p>
+    <div class="cyclenav">
+      <button class="cyc-arrow" id="prevCycle" aria-label="Forrige lønperiode">‹</button>
+      <div class="cyc-label">
+        <span class="cyc-eyebrow">Lønperiode</span>
+        <span id="cycleLabel">—</span>
+      </div>
+      <button class="cyc-arrow" id="nextCycle" aria-label="Næste lønperiode">›</button>
+    </div>
+    <p class="eyebrow">Udbetalt ca.</p>
     <p class="big" id="net">0,00 kr.</p>
     <div class="flowbar" id="flowBar"></div>
     <div class="flowlegend" id="flowLegend"></div>
     <p class="meta" id="meta">0 vagter · 0t 0m</p>
   </div>
 
-  <!-- Din løn -->
-  <div class="card">
+  <!-- Løn -->
+  <p class="group-h">Løn</p>
+  <div class="group">
     <label class="fld">Din timeløn</label>
     <div class="rate-row">
       <input id="rate" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00">
@@ -156,8 +169,8 @@
   </div>
 
   <!-- Tilføj vagt -->
-  <div class="card">
-    <h2>Tilføj vagt</h2>
+  <p class="group-h">Tilføj vagt</p>
+  <div class="group">
     <div class="grid2">
       <div class="full">
         <label class="fld">Dato</label>
@@ -176,31 +189,30 @@
   </div>
 
   <!-- Beregning -->
-  <div class="card">
-    <h2>Beregning</h2>
-    <div id="calcWrap"></div>
-  </div>
+  <p class="group-h">Beregning</p>
+  <div class="group" id="calcWrap"></div>
 
-  <!-- Liste -->
-  <div class="card" id="shiftsWrap">
-    <button class="acc-toggle" id="shiftsToggle"><span id="shiftsTitle">Registrerede vagter</span><span class="car" id="shiftsCaret">▾</span></button>
-    <div id="listWrap" class="hidden" style="margin-top:12px;"></div>
+  <!-- Vagter (accordion) -->
+  <div class="group accordion" id="shiftsAcc" style="margin-top:18px;">
+    <button class="row-toggle" id="shiftsToggle"><span id="shiftsTitle">Vagter i perioden</span>
+      <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="acc-body"><div class="acc-inner"><div id="listWrap"></div></div></div>
   </div>
 
   <!-- Lønseddel -->
-  <div class="card" style="margin-top:15px;">
-    <h2>Tjek din lønseddel</h2>
-    <p class="help" style="margin-bottom:13px;">Indtast det beløb der blev overført til din konto (udbetalt, efter skat).</p>
+  <p class="group-h">Tjek din lønseddel</p>
+  <div class="group">
+    <p class="help" style="margin-bottom:13px;">Udbetales ca. <b id="paydayLine">—</b>. Indtast beløbet der blev overført til kontoen, så sammenligner appen med estimatet.</p>
     <label class="fld">Overført til konto</label>
     <input id="paycheck" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00" style="margin-bottom:13px;">
     <div id="resultWrap"></div>
-    <button class="dark" id="closeBtn" disabled>Gem &amp; start ny periode</button>
   </div>
 
-  <!-- Tillæg & satser -->
-  <div class="card">
-    <button class="acc-toggle" id="ratesToggle"><span>Tillæg &amp; satser</span><span class="car" id="ratesCaret">▾</span></button>
-    <div id="ratesBody" class="hidden" style="margin-top:6px;">
+  <!-- Tillæg & satser (accordion) -->
+  <div class="group accordion" id="ratesAcc" style="margin-top:18px;">
+    <button class="row-toggle" id="ratesToggle"><span>Tillæg &amp; satser</span>
+      <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="acc-body"><div class="acc-inner">
       <div class="grp-h">Hverdag</div>
       <div class="grid2">
         <div>
@@ -234,13 +246,14 @@
         <div class="capcell">Gælder hele søndagen</div>
       </div>
       <p class="fhelp">Satser pr. time efter butiksoverenskomsten. Appen fordeler selv dine vagttimer i bånd — hver time får grundløn + højst ét tillæg. Nattillæg og aftentillæg er kun for hverdage.</p>
-    </div>
+    </div></div>
   </div>
 
-  <!-- Skat & fradrag -->
-  <div class="card">
-    <button class="acc-toggle" id="taxToggle"><span>Skat &amp; fradrag</span><span class="car" id="taxCaret">▾</span></button>
-    <div id="taxBody" class="hidden" style="margin-top:12px;">
+  <!-- Skat & fradrag (accordion) -->
+  <div class="group accordion" id="taxAcc">
+    <button class="row-toggle" id="taxToggle"><span>Skat &amp; fradrag</span>
+      <svg class="chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="acc-body"><div class="acc-inner">
       <div class="grid2">
         <div>
           <label class="fld">Trækprocent</label>
@@ -257,17 +270,11 @@
       <label class="fld" style="margin-top:14px;">Egen pension</label>
       <div class="rate-row"><input id="pension" type="number" inputmode="decimal" min="0" step="0.1"><span class="unit">% af løn</span></div>
       <p class="fhelp">Din seddel viser 1,8% — men af en højere basis (inkl. ferieberettiget løn). ~2,2% af bruttolønnen rammer det samme beløb.</p>
-    </div>
-  </div>
-
-  <!-- Historik -->
-  <div id="histWrap" class="hidden">
-    <button class="hist-toggle" id="histToggle"><span id="histTitle">Tidligere perioder</span><span class="car" id="histCaret">▾</span></button>
-    <ul class="list hist hidden" id="histList" style="margin-top:10px;"></ul>
+    </div></div>
   </div>
 
   <p class="note">
-    Tallet er et estimat af din udbetaling: bruttoløn minus ATP, pension, AM-bidrag (8%) og A-skat. Tillæg følger butiksoverenskomsten (hverdag fra 18, nat fra 23, lørdag fra 15, søndag hele dagen). Mertid er regnet med, fordi den udbetales til normal timeløn. Sygeløn, feriepenge fra FerieKonto og SH/fritvalg er ikke regnet med automatisk. Krydser en vagt midnat regnes det automatisk. Dine data gemmes kun på denne enhed.
+    Tallet er et estimat af din udbetaling: bruttoløn minus ATP, pension, AM-bidrag (8%) og A-skat. Lønperioden går fra den 16. til den 15., og hver vagt regnes med i den periode dens dato falder i. Tillæg følger butiksoverenskomsten (hverdag fra 18, nat fra 23, lørdag fra 15, søndag hele dagen). Mertid er regnet med, fordi den udbetales til normal timeløn. Sygeløn, feriepenge fra FerieKonto og SH/fritvalg er ikke regnet med automatisk. Krydser en vagt midnat regnes det automatisk. Dine data gemmes kun på denne enhed.
   </p>
 </div>
 
@@ -289,15 +296,14 @@ const Store = {
   }
 };
 
-// Defaults afledt af lønsedlen
 const DEF = { rAften:"32.15", rLor:"56.55", rSon:"63.00", rNat:"41.70", eveningStart:"18:00", satStart:"15:00",
               traek:"38", fradrag:"4503", atp:"33", pension:"2.2" };
 
 let state = {
-  rate:"", deductBreak:true, paycheck:"", entries:[], history:[], showHist:false,
+  rate:"", deductBreak:true, entries:[], paychecks:{},
   rAften:DEF.rAften, rLor:DEF.rLor, rSon:DEF.rSon, rNat:DEF.rNat, eveningStart:DEF.eveningStart, satStart:DEF.satStart,
   traek:DEF.traek, fradrag:DEF.fradrag, atp:DEF.atp, pension:DEF.pension,
-  showRates:false, showTax:false, showShifts:false
+  showShifts:false, selectedCycle:""
 };
 
 const dkk = new Intl.NumberFormat("da-DK",{style:"currency",currency:"DKK"});
@@ -326,29 +332,42 @@ function rawMin(en){ const r=shiftMin(en.start,en.end); return r==null?0:r; }
 function breakMin(en){ return (state.deductBreak && rawMin(en)>300) ? 30 : 0; }
 function baseMin(en){ return rawMin(en) - breakMin(en); }
 
-// tal-helpers
 function num(v){ const n=parseFloat((v+"").replace(",", ".")); return isNaN(n)?0:n; }
 function setting(v,d){ const n=parseFloat((v+"").replace(",", ".")); return isNaN(n)?d:n; }
 function rateNum(){ return num(state.rate); }
-function paycheckNum(){ return parseFloat((state.paycheck+"").replace(",", ".")) || 0; }
+function paycheckRaw(){ return state.paychecks[state.selectedCycle] ?? ""; }
+function paycheckNum(){ return parseFloat((paycheckRaw()+"").replace(",", ".")) || 0; }
 
-// Fordel vagtens minutter i tillægs-buckets (søn > lør > nat > aften > grund)
+// --- Lønperioder (16. til 15.) ---
+function ymd(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function cycleStartOf(dateStr){
+  const d=new Date(dateStr+"T00:00:00"); let y=d.getFullYear(), m=d.getMonth();
+  if(d.getDate()<16){ m-=1; if(m<0){ m=11; y-=1; } }
+  return `${y}-${pad(m+1)}-16`;
+}
+function cycleEndOf(s){ const d=new Date(s+"T00:00:00"); return ymd(new Date(d.getFullYear(), d.getMonth()+1, 15)); }
+function shiftCycle(s,delta){ const d=new Date(s+"T00:00:00"); return ymd(new Date(d.getFullYear(), d.getMonth()+delta, 16)); }
+function currentCycle(){ return cycleStartOf(todayStr()); }
+function cycleEntries(){ return state.entries.filter(e=>cycleStartOf(e.date)===state.selectedCycle); }
+function cycleLabel(s){ const f=x=>new Date(x+"T00:00:00").toLocaleDateString("da-DK",{day:"numeric",month:"short"}); return `${f(s)} – ${f(cycleEndOf(s))}`; }
+function paydayOf(s){ const d=new Date(s+"T00:00:00"); let last=new Date(d.getFullYear(), d.getMonth()+2, 0); while(last.getDay()===0||last.getDay()===6) last.setDate(last.getDate()-1); return last; }
+
 function classify(en){
   const b={evening:0, night:0, sat:0, sun:0};
   const s=toMin(en.start);
   if(s==null) return b;
   const total=rawMin(en);
-  const evStart = toMin(state.eveningStart) ?? 1080;   // hverdag-aften, fra 18:00
-  const satStart = toMin(state.satStart) ?? 900;       // lørdag, fra 15:00
-  const dow0 = new Date(en.date+"T00:00:00").getDay(); // ugedag for startdatoen
+  const evStart = toMin(state.eveningStart) ?? 1080;
+  const satStart = toMin(state.satStart) ?? 900;
+  const dow0 = new Date(en.date+"T00:00:00").getDay();
   for(let i=0;i<total;i++){
-    const abs = s+i;                       // minutter fra midnat på startdatoen
+    const abs = s+i;
     const dow = (dow0 + Math.floor(abs/1440)) % 7;
-    const mod = abs%1440;                  // minut på døgnet
-    if(dow===0) b.sun++;                                  // søndag: hele dagen
-    else if(dow===6){ if(mod>=satStart) b.sat++; }        // lørdag: fra kl. 15
-    else if(mod>=1380 || mod<360) b.night++;              // hverdag nat: 23-06
-    else if(mod>=evStart) b.evening++;                    // hverdag aften: 18-23
+    const mod = abs%1440;
+    if(dow===0) b.sun++;
+    else if(dow===6){ if(mod>=satStart) b.sat++; }
+    else if(mod>=1380 || mod<360) b.night++;
+    else if(mod>=evStart) b.evening++;
   }
   return b;
 }
@@ -366,15 +385,14 @@ function computeNet(gross){
 }
 
 async function save(){ await Store.set(KEY, JSON.stringify({
-  rate:state.rate, deductBreak:state.deductBreak, paycheck:state.paycheck,
-  entries:state.entries, history:state.history,
+  rate:state.rate, deductBreak:state.deductBreak, entries:state.entries, paychecks:state.paychecks,
   rAften:state.rAften, rLor:state.rLor, rSon:state.rSon, rNat:state.rNat, eveningStart:state.eveningStart, satStart:state.satStart,
   traek:state.traek, fradrag:state.fradrag, atp:state.atp, pension:state.pension
 })); }
 
 function totals(){
   let base=0, ev=0, ni=0, sa=0, su=0;
-  for(const e of state.entries){
+  for(const e of cycleEntries()){
     base += baseMin(e);
     const c = classify(e);
     ev += c.evening; ni += c.night; sa += c.sat; su += c.sun;
@@ -391,14 +409,16 @@ function totals(){
 }
 
 function renderAll(){
+  const ents = cycleEntries();
   const t = totals();
 
-  // hero
+  document.getElementById("cycleLabel").textContent = cycleLabel(state.selectedCycle);
+  document.getElementById("paydayLine").textContent = niceDate(ymd(paydayOf(state.selectedCycle)));
+
   document.getElementById("net").textContent = money(t.gross>0 ? t.net : 0);
-  const vagtTxt = `${state.entries.length} ${state.entries.length===1?"vagt":"vagter"} · ${dur(t.base)}`;
+  const vagtTxt = `${ents.length} ${ents.length===1?"vagt":"vagter"} · ${dur(t.base)}`;
   document.getElementById("meta").textContent = t.gross>0 ? `Brutto ${money(t.gross)} · ${vagtTxt}` : vagtTxt;
 
-  // flow-bar: brutto -> udbetalt
   const fb = document.getElementById("flowBar");
   const fl = document.getElementById("flowLegend");
   if(t.gross>0){
@@ -416,12 +436,11 @@ function renderAll(){
     fl.innerHTML = "";
   }
 
-  // beregning
   const cw = document.getElementById("calcWrap");
   if(rateNum()===0){
     cw.innerHTML = `<p class="help">Tilføj din timeløn ovenfor for at se beregningen.</p>`;
-  } else if(state.entries.length===0){
-    cw.innerHTML = `<p class="help">Registrér nogle vagter ovenfor for at se beregningen.</p>`;
+  } else if(ents.length===0){
+    cw.innerHTML = `<p class="help">Ingen vagter i denne periode. Tilføj en vagt — eller bladr til en anden periode.</p>`;
   } else {
     const tr = setting(state.traek,38), pn = setting(state.pension,2.2);
     const sub = (label,val)=> val>0.005 ? `<div class="rrow sub"><span class="k">${label}</span><span class="mono">${money(val)}</span></div>` : "";
@@ -441,13 +460,12 @@ function renderAll(){
     <p class="fhelp">Tillægs-fordeling: ${(t.ev/60).toFixed(2).replace(".",",")}t aften${t.ni>0?` · ${(t.ni/60).toFixed(2).replace(".",",")}t nat`:""} · ${(t.sa/60).toFixed(2).replace(".",",")}t lørdag · ${(t.su/60).toFixed(2).replace(".",",")}t søndag.</p>`;
   }
 
-  // liste
   const lw = document.getElementById("listWrap");
-  if(state.entries.length===0){
-    lw.innerHTML = `<div class="empty">Ingen vagter endnu. Tilføj din første vagt ovenfor.</div>`;
+  if(ents.length===0){
+    lw.innerHTML = `<div class="empty">Ingen vagter i denne periode endnu.</div>`;
   } else {
     const tl = rateNum();
-    lw.innerHTML = `<ul class="list">` + state.entries.map(e=>{
+    lw.innerHTML = `<ul class="list">` + ents.map(e=>{
       const bm = baseMin(e);
       const c = classify(e);
       const evP=(c.evening/60)*num(state.rAften), niP=(c.night/60)*num(state.rNat), saP=(c.sat/60)*num(state.rLor), suP=(c.sun/60)*num(state.rSon);
@@ -470,19 +488,16 @@ function renderAll(){
       </li>`;
     }).join("") + `</ul>`;
   }
-  document.getElementById("shiftsTitle").textContent = `Registrerede vagter (${state.entries.length})`;
-  document.getElementById("shiftsCaret").textContent = state.showShifts ? "▴" : "▾";
-  lw.classList.toggle("hidden", !state.showShifts);
+  document.getElementById("shiftsTitle").textContent = `Vagter i perioden (${ents.length})`;
+  document.getElementById("shiftsAcc").classList.toggle("open", state.showShifts);
 
-  // resultat (sammenlign mod netto)
   const rw = document.getElementById("resultWrap");
   const pc = paycheckNum();
-  const hasPc = (state.paycheck+"").trim()!=="" && !isNaN(pc);
-  const can = rateNum()>0 && state.entries.length>0 && hasPc;
+  const hasPc = (paycheckRaw()+"").trim()!=="" && !isNaN(pc);
   if(rateNum()===0){
     rw.innerHTML = `<p class="help">Tilføj din timeløn ovenfor for at sammenligne.</p>`;
-  } else if(state.entries.length===0){
-    rw.innerHTML = `<p class="help">Registrér nogle vagter ovenfor for at sammenligne.</p>`;
+  } else if(ents.length===0){
+    rw.innerHTML = `<p class="help">Ingen vagter i denne periode at sammenligne med.</p>`;
   } else if(hasPc){
     const diff = pc - t.net;
     const tol = Math.max(25, t.net*0.005);
@@ -499,33 +514,6 @@ function renderAll(){
   } else {
     rw.innerHTML = `<p class="help">Indtast det overførte beløb ovenfor for at se forskellen.</p>`;
   }
-  document.getElementById("closeBtn").disabled = !can;
-
-  // historik
-  const hw = document.getElementById("histWrap");
-  if(state.history.length===0){ hw.classList.add("hidden"); }
-  else {
-    hw.classList.remove("hidden");
-    document.getElementById("histTitle").textContent = `Tidligere perioder (${state.history.length})`;
-    document.getElementById("histCaret").textContent = state.showHist ? "▴" : "▾";
-    const hl = document.getElementById("histList");
-    hl.classList.toggle("hidden", !state.showHist);
-    hl.innerHTML = state.history.map(h=>{
-      const d = h.diff;
-      const color = d<-0.005 ? "var(--rose)" : (d>0.005 ? "var(--green)" : "var(--muted)");
-      const sign = d<-0.005 ? "−" : (d>0.005 ? "+" : "");
-      return `<li>
-        <div class="li-main">
-          <div class="li-date">${niceDate(h.closedOn)}</div>
-          <div class="li-sub mono">${h.days} vagter · ${dur(h.totalPaid)}</div>
-        </div>
-        <div class="amt">
-          <div class="mono" style="font-size:14px;">${money(h.received)}</div>
-          <div class="mono" style="font-size:12px;color:${color};">${sign}${money(Math.abs(d))}</div>
-        </div>
-      </li>`;
-    }).join("");
-  }
 }
 
 // Handlers
@@ -535,38 +523,29 @@ function addEntry(){
   const end = document.getElementById("end").value;
   if(shiftMin(start,end)==null) return;
   state.entries.unshift({ id:Date.now(), date, start, end });
+  state.selectedCycle = cycleStartOf(date);
   state.showShifts = true;
+  document.getElementById("paycheck").value = paycheckRaw();
   document.getElementById("start").value = "";
   document.getElementById("end").value = "";
   save(); renderAll();
 }
 
-function closePeriod(){
-  const t = totals();
-  const pc = paycheckNum();
-  if(!(rateNum()>0 && state.entries.length>0 && (state.paycheck+"").trim()!=="")) return;
-  state.history.unshift({
-    id:Date.now(), closedOn:todayStr(), totalPaid:t.base, expected:t.net,
-    received:pc, diff: pc-t.net, days:state.entries.length
-  });
-  state.entries = [];
-  state.paycheck = "";
-  document.getElementById("paycheck").value = "";
-  save(); renderAll();
+function goCycle(delta){
+  state.selectedCycle = shiftCycle(state.selectedCycle, delta);
+  document.getElementById("paycheck").value = paycheckRaw();
+  renderAll();
 }
 
 function bindNum(id, key){
   document.getElementById(id).addEventListener("input", e=>{ state[key]=e.target.value; save(); renderAll(); });
 }
-function bindAcc(btnId, bodyId, caretId, key){
+function bindAcc(accId, btnId){
   document.getElementById(btnId).addEventListener("click", ()=>{
-    state[key]=!state[key];
-    document.getElementById(bodyId).classList.toggle("hidden", !state[key]);
-    document.getElementById(caretId).textContent = state[key] ? "▴" : "▾";
+    document.getElementById(accId).classList.toggle("open");
   });
 }
 
-// Init
 async function init(){
   const raw = await Store.get(KEY);
   if(raw){
@@ -574,9 +553,8 @@ async function init(){
       const d = JSON.parse(raw);
       state.rate = d.rate ?? "";
       state.deductBreak = d.deductBreak !== false;
-      state.paycheck = d.paycheck ?? "";
       state.entries = Array.isArray(d.entries) ? d.entries : [];
-      state.history = Array.isArray(d.history) ? d.history : [];
+      state.paychecks = (d.paychecks && typeof d.paychecks === "object") ? d.paychecks : {};
       state.rAften = d.rAften ?? DEF.rAften;
       state.rLor = d.rLor ?? DEF.rLor;
       state.rSon = d.rSon ?? DEF.rSon;
@@ -589,9 +567,11 @@ async function init(){
       state.pension = d.pension ?? DEF.pension;
     } catch(e){}
   }
+  state.selectedCycle = currentCycle();
+
   document.getElementById("rate").value = state.rate;
   document.getElementById("breakToggle").checked = state.deductBreak;
-  document.getElementById("paycheck").value = state.paycheck;
+  document.getElementById("paycheck").value = paycheckRaw();
   document.getElementById("date").value = todayStr();
   document.getElementById("rAften").value = state.rAften;
   document.getElementById("rLor").value = state.rLor;
@@ -606,18 +586,22 @@ async function init(){
 
   document.getElementById("rate").addEventListener("input", e=>{ state.rate=e.target.value; save(); renderAll(); });
   document.getElementById("breakToggle").addEventListener("change", e=>{ state.deductBreak=e.target.checked; save(); renderAll(); });
-  document.getElementById("paycheck").addEventListener("input", e=>{ state.paycheck=e.target.value; save(); renderAll(); });
+  document.getElementById("paycheck").addEventListener("input", e=>{
+    const v=e.target.value;
+    if(v==="") delete state.paychecks[state.selectedCycle]; else state.paychecks[state.selectedCycle]=v;
+    save(); renderAll();
+  });
   document.getElementById("eveningStart").addEventListener("input", e=>{ state.eveningStart=e.target.value; save(); renderAll(); });
   document.getElementById("satStart").addEventListener("input", e=>{ state.satStart=e.target.value; save(); renderAll(); });
   bindNum("rAften","rAften"); bindNum("rLor","rLor"); bindNum("rSon","rSon"); bindNum("rNat","rNat");
   bindNum("traek","traek"); bindNum("fradrag","fradrag"); bindNum("atp","atp"); bindNum("pension","pension");
 
   document.getElementById("addBtn").addEventListener("click", addEntry);
-  document.getElementById("closeBtn").addEventListener("click", closePeriod);
-  document.getElementById("histToggle").addEventListener("click", ()=>{ state.showHist=!state.showHist; renderAll(); });
+  document.getElementById("prevCycle").addEventListener("click", ()=>goCycle(-1));
+  document.getElementById("nextCycle").addEventListener("click", ()=>goCycle(1));
   document.getElementById("shiftsToggle").addEventListener("click", ()=>{ state.showShifts=!state.showShifts; renderAll(); });
-  bindAcc("ratesToggle","ratesBody","ratesCaret","showRates");
-  bindAcc("taxToggle","taxBody","taxCaret","showTax");
+  bindAcc("ratesAcc","ratesToggle");
+  bindAcc("taxAcc","taxToggle");
   document.getElementById("listWrap").addEventListener("click", e=>{
     const b = e.target.closest("[data-del]"); if(!b) return;
     const id = Number(b.getAttribute("data-del"));
