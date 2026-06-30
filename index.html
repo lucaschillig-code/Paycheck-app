@@ -117,6 +117,7 @@
   .li-date{ font-size:14.5px; font-weight:600; color:var(--ink); letter-spacing:-.2px; }
   .li-sub{ font-size:12.5px; color:var(--ink-2); margin-top:3px; }
   .li-tags{ font-size:11.5px; color:var(--pine); margin-top:4px; font-weight:600; }
+  .ot-badge{ display:inline-block; margin-left:8px; font-size:10px; font-weight:700; color:#9a6a18; background:rgba(240,169,63,.16); padding:2px 7px; border-radius:6px; letter-spacing:.03em; vertical-align:middle; }
   .del{ background:none; border:0; color:var(--ink-3); padding:6px; cursor:pointer; font-size:16px; line-height:1; }
   .del:active{ color:var(--rose); }
   .empty{ padding:6px 0 2px; font-size:13.5px; color:var(--ink-2); }
@@ -185,6 +186,10 @@
         <input id="end" type="time">
       </div>
     </div>
+    <label class="toggle">
+      <input id="otToggle" type="checkbox">
+      <span>Overtid — dobbelt løn for denne vagt</span>
+    </label>
     <button class="primary" id="addBtn">Tilføj vagt</button>
   </div>
 
@@ -391,18 +396,19 @@ async function save(){ await Store.set(KEY, JSON.stringify({
 })); }
 
 function totals(){
-  let base=0, ev=0, ni=0, sa=0, su=0;
-  for(const e of cycleEntries()){
-    base += baseMin(e);
-    const c = classify(e);
-    ev += c.evening; ni += c.night; sa += c.sat; su += c.sun;
-  }
   const tl=rateNum();
-  const basePay = (base/60)*tl;
-  const evPay=(ev/60)*num(state.rAften);
-  const niPay=(ni/60)*num(state.rNat);
-  const saPay=(sa/60)*num(state.rLor);
-  const suPay=(su/60)*num(state.rSon);
+  let base=0, ev=0, ni=0, sa=0, su=0;
+  let basePay=0, evPay=0, niPay=0, saPay=0, suPay=0;
+  for(const e of cycleEntries()){
+    const f = e.ot ? 2 : 1;
+    const bm = baseMin(e), c = classify(e);
+    base+=bm; ev+=c.evening; ni+=c.night; sa+=c.sat; su+=c.sun;
+    basePay += (bm/60)*tl*f;
+    evPay   += (c.evening/60)*num(state.rAften)*f;
+    niPay   += (c.night/60)*num(state.rNat)*f;
+    saPay   += (c.sat/60)*num(state.rLor)*f;
+    suPay   += (c.sun/60)*num(state.rSon)*f;
+  }
   const gross = basePay+evPay+niPay+saPay+suPay;
   const n = computeNet(gross);
   return { base, ev, ni, sa, su, basePay, evPay, niPay, saPay, suPay, gross, ...n };
@@ -411,6 +417,7 @@ function totals(){
 function renderAll(){
   const ents = cycleEntries();
   const t = totals();
+  const hasOt = ents.some(e=>e.ot);
 
   document.getElementById("cycleLabel").textContent = cycleLabel(state.selectedCycle);
   document.getElementById("paydayLine").textContent = niceDate(ymd(paydayOf(state.selectedCycle)));
@@ -457,7 +464,7 @@ function renderAll(){
       <div class="rrow"><span class="k">A-skat (${tr.toLocaleString("da-DK")}%)</span><span class="mono neg">−${money(t.askat)}</span></div>
       <div class="rtotal net-total"><span>Udbetalt ca.</span><span class="mono">${money(t.net)}</span></div>
     </div>
-    <p class="fhelp">Tillægs-fordeling: ${(t.ev/60).toFixed(2).replace(".",",")}t aften${t.ni>0?` · ${(t.ni/60).toFixed(2).replace(".",",")}t nat`:""} · ${(t.sa/60).toFixed(2).replace(".",",")}t lørdag · ${(t.su/60).toFixed(2).replace(".",",")}t søndag.</p>`;
+    <p class="fhelp">Tillægs-fordeling: ${(t.ev/60).toFixed(2).replace(".",",")}t aften${t.ni>0?` · ${(t.ni/60).toFixed(2).replace(".",",")}t nat`:""} · ${(t.sa/60).toFixed(2).replace(".",",")}t lørdag · ${(t.su/60).toFixed(2).replace(".",",")}t søndag.${hasOt?" Overtid tæller dobbelt.":""}</p>`;
   }
 
   const lw = document.getElementById("listWrap");
@@ -468,8 +475,9 @@ function renderAll(){
     lw.innerHTML = `<ul class="list">` + ents.map(e=>{
       const bm = baseMin(e);
       const c = classify(e);
+      const f = e.ot ? 2 : 1;
       const evP=(c.evening/60)*num(state.rAften), niP=(c.night/60)*num(state.rNat), saP=(c.sat/60)*num(state.rLor), suP=(c.sun/60)*num(state.rSon);
-      const pay = (bm/60)*tl + evP+niP+saP+suP;
+      const pay = ((bm/60)*tl + evP+niP+saP+suP) * f;
       const brk = breakMin(e) ? ` · −30 min pause` : "";
       const payTxt = tl>0 ? ` · ${money(pay)}` : "";
       const tags=[];
@@ -477,10 +485,11 @@ function renderAll(){
       if(c.night>0) tags.push(`${(c.night/60).toFixed(2).replace(".",",")}t nat`);
       if(c.sat>0) tags.push(`${(c.sat/60).toFixed(2).replace(".",",")}t lør`);
       if(c.sun>0) tags.push(`${(c.sun/60).toFixed(2).replace(".",",")}t søn`);
+      const otBadge = e.ot ? ` <span class="ot-badge">OVERTID ×2</span>` : "";
       const tagLine = tags.length ? `<div class="li-tags">+ ${tags.join(" · ")}</div>` : "";
       return `<li>
         <div class="li-main">
-          <div class="li-date">${niceDate(e.date)}</div>
+          <div class="li-date">${niceDate(e.date)}${otBadge}</div>
           <div class="li-sub mono">${e.start}–${e.end} · ${dur(bm)}${brk}${payTxt}</div>
           ${tagLine}
         </div>
@@ -522,12 +531,14 @@ function addEntry(){
   const start = document.getElementById("start").value;
   const end = document.getElementById("end").value;
   if(shiftMin(start,end)==null) return;
-  state.entries.unshift({ id:Date.now(), date, start, end });
+  const ot = document.getElementById("otToggle").checked;
+  state.entries.unshift({ id:Date.now(), date, start, end, ot });
   state.selectedCycle = cycleStartOf(date);
   state.showShifts = true;
   document.getElementById("paycheck").value = paycheckRaw();
   document.getElementById("start").value = "";
   document.getElementById("end").value = "";
+  document.getElementById("otToggle").checked = false;
   save(); renderAll();
 }
 
